@@ -22,19 +22,19 @@ public class PlayerController_Test : MonoBehaviour
     }
     private void PlayerMove()
     {
-        if(Input.GetKey(KeyCode.LeftArrow))
+        if(Input.GetKey(KeyCode.A))
         {
             this.transform.Translate(-0.01f, 0.0f, 0.0f);
         }
-        if (Input.GetKey(KeyCode.RightArrow))
+        if (Input.GetKey(KeyCode.D))
         {
             this.transform.Translate(0.01f, 0.0f, 0.0f);
         }
-        if (Input.GetKey(KeyCode.UpArrow))
+        if (Input.GetKey(KeyCode.W))
         {
             this.transform.Translate(0.0f, 0.0f, 0.01f);
         }
-        if (Input.GetKey(KeyCode.DownArrow))
+        if (Input.GetKey(KeyCode.S))
         {
             this.transform.Translate(0.0f, 0.0f, -0.01f);
         }
