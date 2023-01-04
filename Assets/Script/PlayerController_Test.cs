@@ -38,7 +38,7 @@ public class PlayerController_Test : MonoBehaviour
         {
             this.transform.Translate(0.0f, 0.0f, -0.01f);
         }
-        if (Input.GetKey(KeyCode.Space))
+        if (Input.GetMouseButton(0))
         {
             ShotSnowBall();
         }
