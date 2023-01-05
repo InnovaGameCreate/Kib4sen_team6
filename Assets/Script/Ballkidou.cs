@@ -54,4 +54,10 @@ public class Ballkidou : MonoBehaviour
         accel = new Vector3(0, -1, 0);
         this.gameObject.GetComponent<Rigidbody>().AddForce(accel);
     }
+
+    private void OnCollisionEnter(Collision collision)  //ê·ã Ç™âΩÇ©Ç…è’ìÀÇµÇΩÇÁè¡Ç¶ÇÈ
+    {
+        Destroy(this.gameObject);
+    }
+
 }
