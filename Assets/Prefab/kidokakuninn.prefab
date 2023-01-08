@@ -8,7 +8,7 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 4171372205978081546}
+  - component: {fileID: 5179629860586051459}
   - component: {fileID: 7841299666567750380}
   - component: {fileID: 6334419023376644596}
   - component: {fileID: 126493086339221916}
@@ -21,7 +21,7 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4171372205978081546
+--- !u!4 &5179629860586051459
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -29,7 +29,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5273941213925225755}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.4692066, y: 2.0641332, z: -2.9142354}
+  m_LocalPosition: {x: 1.2099991, y: 2.41, z: 2.73}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -128,5 +128,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 5
+  okuyuki: 0
   waittime: 1
-  t: 2
+  gensoku: 5
+  gravity: 1
+  gkasokukankaku: 0.1
+  particle: {fileID: 1576920850157119680, guid: 60dc568e68ab13145b8b43c2e3b07981, type: 3}
