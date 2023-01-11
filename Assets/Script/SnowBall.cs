@@ -5,8 +5,6 @@ using UnityEngine;
 public class SnowBall : MonoBehaviour
 {
     private Vector3 pos; //ブロックを設置する位置
-    [SerializeField]
-    private GameObject blockPrefab;
     private Rigidbody ballRigid;
     [SerializeField]
     private float force = 1f;
