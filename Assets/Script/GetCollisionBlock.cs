@@ -16,7 +16,7 @@ public class GetCollisionBlock : MonoBehaviour
         
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnCollisionEnter(Collision collision)  //衝突した地面ブロックの位置を取得
     {
         if(collision.gameObject.tag == "Grand")
         {
