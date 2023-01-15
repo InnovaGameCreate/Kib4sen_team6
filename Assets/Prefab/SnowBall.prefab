@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 8855771322849045852}
   - component: {fileID: 3833956923800401867}
   - component: {fileID: 2096923947564279112}
-  - component: {fileID: -3211868455950180616}
   m_Layer: 6
   m_Name: SnowBall
   m_TagString: Untagged
@@ -128,17 +127,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f5aa98f5aca88a4ca33acd6665fb19a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  blockPrefab: {fileID: 881440682111859401, guid: 14fd138b0ff96ac4a94dc7b32f299145, type: 3}
   force: 1000
---- !u!114 &-3211868455950180616
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 904010653442625431}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bc4c891858dfbc046b1e589873e7bb4e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
