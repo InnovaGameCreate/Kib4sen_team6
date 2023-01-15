@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class SnowBall : MonoBehaviour
 {
+    const int UP = 1;   //盛り上がる時のフラグ
     private Vector3 pos; //ブロックを設置する位置
     private Rigidbody ballRigid;
     [SerializeField]
@@ -19,23 +20,14 @@ public class SnowBall : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //ボールの位置から速度方向へ飛ばす
-        Ray ray = new Ray(this.transform.position,ballRigid.velocity);
-        //当たったオブジェクト情報を格納する変数
-        RaycastHit hit;
-
-        //Physics.Raycast() でレイを飛ばす
-        if (Physics.Raycast(ray, out hit))
-        {
-            //衝突した面の方向+ブロックの座標
-            pos = hit.normal / 2 + hit.collider.transform.position;
-
-        }
     }
 
     private void OnCollisionEnter(Collision collision)
     {
         Destroy(this.gameObject);
-
+        if (collision.gameObject.tag == "Grand")
+        {
+            MapManager.instance.ChangeBlock(collision.gameObject, collision.gameObject.transform, UP);
+        }
     }
 }
