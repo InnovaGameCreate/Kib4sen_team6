@@ -11,6 +11,7 @@ public class PlayerController_Test : MonoBehaviour
     private Transform pos;
     private GameObject block;
     const int DOWN = 0;
+    int Remaining = 10;
 
     // Start is called before the first frame update
     void Start()
@@ -27,11 +28,19 @@ public class PlayerController_Test : MonoBehaviour
     {
         if (Input.GetMouseButton(0))
         {
-            ShotSnowBall();
+            if(Remaining > 0)
+            {
+                ShotSnowBall();
+                Remaining--;
+            }
         }
         if (Input.GetMouseButton(1))
         {
             ShotRay();
+            if(Remaining < 10)
+            {
+                Remaining++;
+            }
         }
     }
     
