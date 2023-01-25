@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 126493086339221916}
   - component: {fileID: 8223021465398389634}
   - component: {fileID: 980727259036840582}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: kidokakuninn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -30,8 +30,8 @@ Transform:
   m_GameObject: {fileID: 5273941213925225755}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 1.2099991, y: 2.41, z: 2.73}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.6, y: 0.6, z: 0.6}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
