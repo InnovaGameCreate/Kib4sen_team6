@@ -46,7 +46,7 @@ public class PlayerController_Test : MonoBehaviour
     
     private void ShotSnowBall()
     {
-        Vector3 ShotPos = this.transform.position + new Vector3(0.5f, 0, 0.3f);
+        Vector3 ShotPos = this.transform.position + new Vector3(1f, 0, 1f);
         Instantiate(ballPrefab, ShotPos, Quaternion.identity);
     }
     

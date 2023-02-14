@@ -9,12 +9,13 @@ public class SnowBall : MonoBehaviour
     private Rigidbody ballRigid;
     [SerializeField]
     private float force = 1f;
+    [SerializeField]
+    private float LifeTime;
     // Start is called before the first frame update
     void Start()
     {
         ballRigid = this.GetComponent<Rigidbody>();
-        ballRigid.AddForce(new Vector3(force, 0, 0));
-
+        Destroy(this.gameObject, LifeTime);
     }
 
     // Update is called once per frame
@@ -25,9 +26,9 @@ public class SnowBall : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         Destroy(this.gameObject);
-        if (collision.gameObject.tag == "Grand")
+        /*if (collision.gameObject.tag == "Grand")
         {
             MapManager.instance.ChangeBlock(collision.gameObject, collision.gameObject.transform, UP);
-        }
+        }*/
     }
 }
