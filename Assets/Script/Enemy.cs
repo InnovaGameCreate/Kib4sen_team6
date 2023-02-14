@@ -274,6 +274,7 @@ public class Enemy : MonoBehaviour
         }
         if(Area == 2)
         {
+
             var MaxDeg = Mathf.Acos(CosDiv3) * Mathf.Rad2Deg;
             var MinDeg = Mathf.Acos(CosDiv2) * Mathf.Rad2Deg;
             var rand = Random.Range(MinDeg, MaxDeg);    //MinDeg`MaxDig‚Ì”ÍˆÍ‚Åƒ‰ƒ“ƒ_ƒ€‚ÈŠp“x‚ğŠl“¾
