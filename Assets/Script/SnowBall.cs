@@ -5,29 +5,28 @@ using UnityEngine;
 public class SnowBall : MonoBehaviour
 {
     const int UP = 1;   //盛り上がる時のフラグ
-    private Vector3 pos; //ブロックを設置する位置
-    private Rigidbody ballRigid;
     [SerializeField]
-    private float force = 1f;
+    private float LifeTime;
     // Start is called before the first frame update
     void Start()
     {
-        ballRigid = this.GetComponent<Rigidbody>();
-        ballRigid.AddForce(new Vector3(force, 0, 0));
-
+        Destroy(this.gameObject, LifeTime);
     }
 
     // Update is called once per frame
     void Update()
     {
+        //Debug.Log(ballRigid.velocity.magnitude);　//速度表示
     }
 
     private void OnCollisionEnter(Collision collision)
     {
+        if (collision.gameObject.tag == "Player")
+            Debug.Log("hit");
         Destroy(this.gameObject);
-        if (collision.gameObject.tag == "Grand")
+        /*if (collision.gameObject.tag == "Grand")
         {
-            MapManager.instance.ChangeBlock(collision.gameObject, collision.gameObject.transform, UP);
-        }
+            MapManager.instance.ChangeBlock(collision.gameObject, collision.gameObject.transform, UP);  //ブロックの設置
+        }*/
     }
 }
