@@ -39,6 +39,7 @@ public class Enemy : MonoBehaviour
     float CosDiv1;
     float CosDiv2;
     float CosDiv3;
+    float Temp_prob;
     public struct AreaInfo
     {
         public float Probabillity; //そのエリアの事前確率
@@ -49,7 +50,7 @@ public class Enemy : MonoBehaviour
 
     private float After_ProbabillitySum; //事後確率の総数
     List<int> TargetMovedArea = new List<int>();    //ターゲットが移動したエリアを格納
-    AreaInfo[] AreaInfos = new AreaInfo[7]; //各エリアの情報
+    AreaInfo[] AreaInfos = new AreaInfo[6]; //各エリアの情報
 
 
     enum State
@@ -105,8 +106,14 @@ public class Enemy : MonoBehaviour
         //ターゲットがどの位置にいるか毎フレーム確認
         if (InnerProduct > CosDiv1)
         {
-            AreaNum = 0;
-            //ShotDir = RandomAngle(CosDiv1, CosDiv1,Center);
+            if (angle > 0)
+            {
+                AreaNum = 0;
+            }
+            else
+            {
+                AreaNum = 3;
+            }
         }
         if (InnerProduct < CosDiv1 && InnerProduct > CosDiv2)
         {
@@ -131,17 +138,6 @@ public class Enemy : MonoBehaviour
             }
 
         }
-        if (InnerProduct < CosDiv3)
-        {
-            if (angle > 0)
-            {
-                AreaNum = 3;
-            }
-            else
-            {
-                AreaNum = 6;
-            }
-        }
 
 
         //ShotDir = RandomAngle(CosDiv1);
@@ -155,7 +151,7 @@ public class Enemy : MonoBehaviour
         line = this.GetComponent<LineRenderer>();
         TargetRigid = Target.GetComponent<Rigidbody>();
         HavingBallNum = 10;
-        childObj = transform.GetChild(0).gameObject;    //最初の子オブジェクトの座標を取得
+        childObj = transform.GetChild(2).gameObject;    //最初の子オブジェクトの座標を取得
         for (int i = 0; i < AreaInfos.Length; i++)
         {
             AreaInfos[i].Probabillity = 1f / 7f; //事前確率を初期化
@@ -167,9 +163,10 @@ public class Enemy : MonoBehaviour
     // 視界判定の結果をGUI出力
     private void Update()
     {
+        /*
         line.SetPosition(0, childObj.transform.position);
         line.SetPosition(1, transform.forward * 1000);
-
+        */
         stateTime += Time.deltaTime;    //現在のステートになってからの時間を計測
         // 視界判定
         isVisible = IsVisible();
@@ -196,7 +193,7 @@ public class Enemy : MonoBehaviour
                 TurnFlag = false;   //投げるときは向きを固定
                 GameObject ball = (GameObject)Instantiate(ballPrefab, childObj.transform.position, Quaternion.identity);
                 Rigidbody ballRigidbody = ball.GetComponent<Rigidbody>();
-                yield return new WaitForSeconds(0.5f);    //射撃準備で0.5秒停止
+                yield return new WaitForSeconds(0.3f);    //射撃準備で0.3秒停止
                                                           //ballRigidbody.AddForce(transform.forward * speed, ForceMode.Impulse);
                 if (TargetMovedArea.Count != 0)//1回目以外の時
                     ShotDir = RandomAngle(Bayesian()); //ベイズ推定
@@ -258,7 +255,7 @@ public class Enemy : MonoBehaviour
         if (Area == 0)
         {
             var Deg = Mathf.Acos(CosDiv1) * Mathf.Rad2Deg;
-            var rand = Random.Range(-Deg, Deg);    //-θ/6～θ/6の範囲でランダムな角度を獲得
+            var rand = Random.Range(0, Deg);    //0～θ/6の範囲でランダムな角度を獲得
             var RandRad = rand * Mathf.Deg2Rad; //degをradに変換
             var RandomDir = Quaternion.Euler(0, rand, 0) * transform.forward;   //ランダムな発射方向
             return RandomDir;
@@ -279,6 +276,14 @@ public class Enemy : MonoBehaviour
             var rand = Random.Range(MinDeg, MaxDeg);    //MinDeg～MaxDigの範囲でランダムな角度を獲得
             var RandRad = rand * Mathf.Deg2Rad; //degをradに変換
             //var RandomDir = transform.forward + new Vector3(Mathf.Sin(RandRad), 0, Mathf.Cos(RandRad));   //ランダムな発射方向
+            var RandomDir = Quaternion.Euler(0, rand, 0) * transform.forward;   //ランダムな発射方向
+            return RandomDir;
+        }
+        if (Area == 3)
+        {
+            var Deg = Mathf.Acos(CosDiv1) * Mathf.Rad2Deg;
+            var rand = Random.Range(-Deg, 0);    //-θ/6～0の範囲でランダムな角度を獲得
+            var RandRad = rand * Mathf.Deg2Rad; //degをradに変換
             var RandomDir = Quaternion.Euler(0, rand, 0) * transform.forward;   //ランダムな発射方向
             return RandomDir;
         }
@@ -317,16 +322,30 @@ public class Enemy : MonoBehaviour
         }
         for (int i = 0; i < AreaInfos.Length; i++)
         {
-            AreaInfos[i].After_Probabillity = AreaInfos[i].After_Probabillity / After_ProbabillitySum;   //事後確率の正規化
-            if (i == 0)
+            AreaInfos[i].After_Probabillity = AreaInfos[i].After_Probabillity / After_ProbabillitySum;   //各事後確率の正規化
+            /*if (i == 0)
                 ShotArea = 0;
             else
             {
                 if (AreaInfos[i].After_Probabillity > AreaInfos[ShotArea].After_Probabillity)
                     ShotArea = i;   //常に確率が最も高いエリアを格納
             }
+            */
         }
+        float rand = float.MaxValue;   //0.0~1.0を取得
+        for (int i = 0; i < AreaInfos.Length; i++)
+        {
+            Temp_prob += AreaInfos[i].After_Probabillity;   //各エリアの確率を順番に足す
+            if(Temp_prob >= rand) //和がrandを超えた時点でのエリアを返す
+            {
+                ShotArea = i;
+                break;
+            }
+        }
+        //初期化
         After_ProbabillitySum = 0;
+        Temp_prob = 0;
+
         return ShotArea;   //確率が最も高いエリアを返す
     }
 
