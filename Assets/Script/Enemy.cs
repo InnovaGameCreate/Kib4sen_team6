@@ -52,6 +52,8 @@ public class Enemy : MonoBehaviour
     List<int> TargetMovedArea = new List<int>();    //ターゲットが移動したエリアを格納
     AreaInfo[] AreaInfos = new AreaInfo[6]; //各エリアの情報
 
+    private Animator characterAnim;
+
 
     enum State
     {
@@ -147,7 +149,7 @@ public class Enemy : MonoBehaviour
 
     private void Start()
     {
-        TurnFlag = true;
+        //TurnFlag = true;
         line = this.GetComponent<LineRenderer>();
         TargetRigid = Target.GetComponent<Rigidbody>();
         HavingBallNum = 10;
@@ -158,6 +160,7 @@ public class Enemy : MonoBehaviour
             AreaInfos[i].After_Probabillity = 1f / 7f;
             AreaInfos[i].Count = 0f;
         }
+        characterAnim = GetComponent<Animator>();
     }
 
     // 視界判定の結果をGUI出力
@@ -176,9 +179,11 @@ public class Enemy : MonoBehaviour
 
     private void TurnToTarget()    //ターゲットの方を向く
     {
+        var Vector = TargetPos - transform.position;
+        Vector.y = 0f;
         transform.rotation = Quaternion.Lerp(
             transform.rotation,
-            Quaternion.LookRotation(TargetPos - transform.position),
+            Quaternion.LookRotation(Vector),
             1);
 
     }
@@ -190,7 +195,8 @@ public class Enemy : MonoBehaviour
         {
             if (isVisible)
             {
-                TurnFlag = false;   //投げるときは向きを固定
+                //characterAnim.SetBool("ShotFlag",true);   //投げるときは向きを固定
+                TurnFlag = false;
                 GameObject ball = (GameObject)Instantiate(ballPrefab, childObj.transform.position, Quaternion.identity);
                 Rigidbody ballRigidbody = ball.GetComponent<Rigidbody>();
                 yield return new WaitForSeconds(0.3f);    //射撃準備で0.3秒停止
@@ -203,13 +209,14 @@ public class Enemy : MonoBehaviour
                 //ShotDir = RandomAngle();
                 ballRigidbody.AddForce(ShotDir.normalized * speed, ForceMode.Impulse);
                 TargetMovedArea.Add(AreaNum);   //投げる瞬間のターゲットの位置を保存
+                //characterAnim.SetBool("ShotFlag", false);
                 TurnFlag = true;
                 HavingBallNum--;    //持っている雪玉の数を1減らす
                 var rnd = Random.Range(1, 11);　// ※ 1～10の範囲でランダムな整数値が返る
                 if (rnd == 1 || rnd == 2)    //ランダムな確率で弾を発射しない状態に移行
                 {
                     //ChangeState(State.doNothing);
-                    // yield break;
+                    //yield break;
                 }
             }
             yield return new WaitForSeconds(0.5f);    //1秒待機
@@ -234,11 +241,12 @@ public class Enemy : MonoBehaviour
                 {
                     shotCoroutine = StartCoroutine("BallShot");
                 }
-                if (TurnFlag)    //フラグがtrueなら
+                //if (!characterAnim.GetBool("ShotFlag"))    //フラグがfalseなら
+                if(TurnFlag)
                     TurnToTarget(); //ターゲットの方を向く
                 break;
             case State.doNothing:
-                Debug.Log("やることなくなった");
+                    Debug.Log("やることなくなった");
                 break;
         }
     }

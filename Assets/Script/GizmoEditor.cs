@@ -23,7 +23,7 @@ namespace Egliss
         {
             Gizmos.color = view.color;
 
-            Vector3 pos = view.transform.position - new Vector3(0,0.4f,0);
+            Vector3 pos = view.transform.position - new Vector3(0,0,0);
             Quaternion rot = view.transform.rotation;
             Vector3 scale = Vector3.one * view.distance;
 
