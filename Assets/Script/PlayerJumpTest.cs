@@ -12,7 +12,7 @@ public class PlayerJumpTest : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         UpForce = 500;
-        Distance = 1.0f;
+        Distance = 3.0f;
     }
 
     // Update is called once per frame

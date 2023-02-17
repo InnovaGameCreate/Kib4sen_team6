@@ -14,7 +14,7 @@ public class CameraMove : MonoBehaviour
     bool cursorLock = true;
 
     //•Ï”‚ÌéŒ¾(Šp“x‚Ì§ŒÀ—p)
-    float minX = -90f, maxX = 90f;
+    float minX = -70f, maxX = 45f;
 
     // Start is called before the first frame update
     void Start()
@@ -52,7 +52,7 @@ public class CameraMove : MonoBehaviour
 
         //transform.position += new Vector3(x,0,z);
 
-        transform.position += cam.transform.forward * z + cam.transform.right * x;
+        transform.position += cam.transform.forward * z / 2 + cam.transform.right * x / 2;
     }
 
 
