@@ -7,28 +7,28 @@ public class SnowBall : MonoBehaviour
     const int UP = 1;   //盛り上がる時のフラグ
     [SerializeField]
     private float LifeTime;
-    private Vector3 prePosition;
-    private Vector3 startPosition;
-    public float Timer;
-    private bool Flag;
+    //private Vector3 prePosition;
+    ///private Vector3 startPosition;
+    //public float Timer;
+    //private bool Flag;
     // Start is called before the first frame update
     void Start()
     {
-        startPosition = this.transform.position;
+        //startPosition = this.transform.position;
         Destroy(this.gameObject, LifeTime);
-        prePosition = this.transform.position;
-        Timer = 0f;
+        //prePosition = this.transform.position;
+        //Timer = 0f;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Vector3.Distance(this.transform.position, prePosition) >= 0.5)
+        /*if (Vector3.Distance(this.transform.position, prePosition) >= 0.5)
         {
             Flag = true;
-        }
+        }*/
         //Debug.Log(ballRigid.velocity.magnitude);　//速度表示
-        if (Flag)
+        /*if (Flag)
         {
             Timer += Time.deltaTime;
             if(Timer >= 1f)
@@ -36,6 +36,7 @@ public class SnowBall : MonoBehaviour
                 Debug.Log(Vector3.Distance(this.transform.position, startPosition));
             }
         }
+        */
     }
     private void OnCollisionEnter(Collision collision)
     {

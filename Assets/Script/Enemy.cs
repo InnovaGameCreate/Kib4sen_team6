@@ -21,7 +21,6 @@ public class Enemy : MonoBehaviour
     private float MaxDistance = float.PositiveInfinity; //視界の最大距離
     [SerializeField]
     private int speed;
-    private Vector3 TargetPos;
     private bool isVisible;
     private Coroutine shotCoroutine;
     private float TargetDistance;
@@ -50,7 +49,8 @@ public class Enemy : MonoBehaviour
 
     private float After_ProbabillitySum; //事後確率の総数
     List<int> TargetMovedArea = new List<int>();    //ターゲットが移動したエリアを格納
-    AreaInfo[] AreaInfos = new AreaInfo[6]; //各エリアの情報
+    AreaInfo[] AreaInfos1 = new AreaInfo[6]; //各エリアの情報
+    AreaInfo[] AreaInfos2 = new AreaInfo[6]; //各エリアの情報
 
     private Animator characterAnim;
 
@@ -67,18 +67,48 @@ public class Enemy : MonoBehaviour
     private bool stateEnter = false;
     private float stateTime = 0f;
 
-    void ChangeState(State _nextState)
+
+    private void Start()
     {
-        currentState = _nextState;
-        stateEnter = true;
-        stateTime = 0f;
+        //TurnFlag = true;
+        line = this.GetComponent<LineRenderer>();
+        TargetRigid = Target.GetComponent<Rigidbody>();
+        HavingBallNum = 10;
+        childObj = transform.GetChild(2).gameObject;    //最初の子オブジェクトの座標を取得
+        for (int i = 0; i < AreaInfos.Length; i++)
+        {
+            AreaInfos[i].Probabillity = 1f / 6f; //事前確率を初期化
+            AreaInfos[i].After_Probabillity = 1f / 6f;
+            AreaInfos[i].Count = 0f;
+        }
+        for (int i = 0; i < AreaInfos2.Length; i++)
+        {
+            AreaInfos2[i].Probabillity = 1f / 6f; //事前確率を初期化
+            AreaInfos2[i].After_Probabillity = 1f / 6f;
+            AreaInfos2[i].Count = 0f;
+        }
+        characterAnim = GetComponent<Animator>();
+    }
+
+    // 視界判定の結果をGUI出力
+    private void Update()
+    {
+        /*
+        line.SetPosition(0, childObj.transform.position);
+        line.SetPosition(1, transform.forward * 1000);
+        */
+        stateTime += Time.deltaTime;    //現在のステートになってからの時間を計測
+        // 視界判定
+        isVisible = IsVisible();
+        StateManager();
+
     }
 
     public bool IsVisible() //視界に入っているか判定
     {
         var SelfPos = Self.position;    //自身の位置
 
-        TargetPos = Target.position;    //ターゲットの位置
+        var TargetPos = Target.position;    //ターゲットの位置
 
         var SelfDir = Self.forward; //自身の向き
 
@@ -147,36 +177,6 @@ public class Enemy : MonoBehaviour
         return InnerProduct > CosHalf && TargetDistance < MaxDistance;  //角度判定かつ距離判定
     }
 
-    private void Start()
-    {
-        //TurnFlag = true;
-        line = this.GetComponent<LineRenderer>();
-        TargetRigid = Target.GetComponent<Rigidbody>();
-        HavingBallNum = 10;
-        childObj = transform.GetChild(2).gameObject;    //最初の子オブジェクトの座標を取得
-        for (int i = 0; i < AreaInfos.Length; i++)
-        {
-            AreaInfos[i].Probabillity = 1f / 7f; //事前確率を初期化
-            AreaInfos[i].After_Probabillity = 1f / 7f;
-            AreaInfos[i].Count = 0f;
-        }
-        characterAnim = GetComponent<Animator>();
-    }
-
-    // 視界判定の結果をGUI出力
-    private void Update()
-    {
-        /*
-        line.SetPosition(0, childObj.transform.position);
-        line.SetPosition(1, transform.forward * 1000);
-        */
-        stateTime += Time.deltaTime;    //現在のステートになってからの時間を計測
-        // 視界判定
-        isVisible = IsVisible();
-        StateManager();
-
-    }
-
     private void TurnToTarget()    //ターゲットの方を向く
     {
         var Vector = TargetPos - transform.position;
@@ -188,6 +188,46 @@ public class Enemy : MonoBehaviour
 
     }
 
+    private void StateManager()
+    {
+        switch (currentState)
+        {
+            case State.Serch:
+                if (stateEnter) //この状態になってから最初のフレームだけ実行
+                { }
+                if (isVisible)
+                {
+                    ChangeState(State.Attack);
+                    return;
+                }
+                break;
+            case State.Attack:
+                if (stateEnter) //この状態になってから最初のフレームだけ実行
+                {
+                    shotCoroutine = StartCoroutine("BallShot");
+                }
+                //if (!characterAnim.GetBool("ShotFlag"))    //フラグがfalseなら
+                if(TurnFlag)
+                    TurnToTarget(); //ターゲットの方を向く
+                break;
+            case State.doNothing:
+                    Debug.Log("やることなくなった");
+                break;
+        }
+    }
+
+    void ChangeState(State _nextState)
+    {
+        currentState = _nextState;
+        stateEnter = true;
+        stateTime = 0f;
+    }
+
+    private void LateUpdate()
+    {
+        if (stateTime != 0)
+            stateEnter = false;
+    }
 
     private IEnumerator BallShot()
     {
@@ -219,42 +259,8 @@ public class Enemy : MonoBehaviour
                     //yield break;
                 }
             }
-            yield return new WaitForSeconds(0.5f);    //1秒待機
+            yield return new WaitForSeconds(0.5f);    //0.5秒待機
         }
-    }
-
-    private void StateManager()
-    {
-        switch (currentState)
-        {
-            case State.Serch:
-                if (stateEnter) //この状態になってから最初のフレームだけ実行
-                { }
-                if (isVisible)
-                {
-                    ChangeState(State.Attack);
-                    return;
-                }
-                break;
-            case State.Attack:
-                if (stateEnter) //この状態になってから最初のフレームだけ実行
-                {
-                    shotCoroutine = StartCoroutine("BallShot");
-                }
-                //if (!characterAnim.GetBool("ShotFlag"))    //フラグがfalseなら
-                if(TurnFlag)
-                    TurnToTarget(); //ターゲットの方を向く
-                break;
-            case State.doNothing:
-                    Debug.Log("やることなくなった");
-                break;
-        }
-    }
-
-    private void LateUpdate()
-    {
-        if (stateTime != 0)
-            stateEnter = false;
     }
 
     private Vector3 RandomAngle(int Area)  //視界内でランダムにボールを投げる
@@ -318,10 +324,10 @@ public class Enemy : MonoBehaviour
 
     }
 
-    private int Bayesian() //ベイズ推定
+    private int Bayesian(bool FocusFlag) //ベイズ推定
     {
         var CountNum = TargetMovedArea.Count - 1;
-        AreaInfos[TargetMovedArea[CountNum]].Count++;   //これまでに各エリアを何回通ったかカウント
+
         for (int i = 0; i < AreaInfos.Length; i++)
         {
             var likelihood = AreaInfos[i].Count / (float)TargetMovedArea.Count; //尤度を求める
@@ -331,23 +337,29 @@ public class Enemy : MonoBehaviour
         for (int i = 0; i < AreaInfos.Length; i++)
         {
             AreaInfos[i].After_Probabillity = AreaInfos[i].After_Probabillity / After_ProbabillitySum;   //各事後確率の正規化
-            /*if (i == 0)
-                ShotArea = 0;
-            else
+            if (!FocusFlag) //確率分布が分散していたら
             {
-                if (AreaInfos[i].After_Probabillity > AreaInfos[ShotArea].After_Probabillity)
-                    ShotArea = i;   //常に確率が最も高いエリアを格納
+                if (i == 0)
+                    ShotArea = 0;
+                else
+                {
+                    if (AreaInfos[i].After_Probabillity > AreaInfos[ShotArea].After_Probabillity)
+                        ShotArea = i;   //常に確率が最も高いエリアを格納
+                }
             }
-            */
+            
         }
-        float rand = float.MaxValue;   //0.0~1.0を取得
-        for (int i = 0; i < AreaInfos.Length; i++)
+        if (!FocusFlag) //確率分布が一定以上に収束していたら
         {
-            Temp_prob += AreaInfos[i].After_Probabillity;   //各エリアの確率を順番に足す
-            if(Temp_prob >= rand) //和がrandを超えた時点でのエリアを返す
+            float rand = float.MaxValue;   //0.0~1.0を取得
+            for (int i = 0; i < AreaInfos.Length; i++)
             {
-                ShotArea = i;
-                break;
+                Temp_prob += AreaInfos[i].After_Probabillity;   //各エリアの確率を順番に足す
+                if (Temp_prob >= rand) //和がrandを超えた時点でのエリアを返す
+                {
+                    ShotArea = i;
+                    break;
+                }
             }
         }
         //初期化
@@ -357,5 +369,17 @@ public class Enemy : MonoBehaviour
         return ShotArea;   //確率が最も高いエリアを返す
     }
 
+    private IEnumerator CalcArriveTime()    //移動予測地点のエリアを取得
+    {
+        var Distance = Vector3.Distance(Self.position, Target.position);   //ターゲットとの距離を計算
+        var ArrivalTime = Distance / speed; //到着までの時間を計算
+        yield return new WaitForSeconds(ArrivalTime);   //到着するまで待機
+        AreaInfos2[AreaNum].Count++;   //その時点でのエリアを記憶
+    }
+
+    private void IntegrationArray()
+    {
+
+    }
 
 }
