@@ -14,7 +14,7 @@ public class CameraMove : MonoBehaviour
     bool cursorLock = true;
 
     //•Ï”‚ÌéŒ¾(Šp“x‚Ì§ŒÀ—p)
-    float minX = -70f, maxX = 45f;
+    float minX = -60f, maxX = 47f;
 
     // Start is called before the first frame update
     void Start()

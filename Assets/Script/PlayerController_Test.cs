@@ -26,21 +26,16 @@ public class PlayerController_Test : MonoBehaviour
     }
     private void PlayerMove()
     {
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButtonDown(0))
         {
             if(Remaining > 0)
             {
                 ShotSnowBall();
-                Remaining--;
             }
         }
-        if (Input.GetMouseButton(1))
+        if (Input.GetMouseButtonDown(1))
         {
             ShotRay();
-            if(Remaining < 10)
-            {
-                Remaining++;
-            }
         }
     }
     
@@ -48,6 +43,7 @@ public class PlayerController_Test : MonoBehaviour
     {
         Vector3 ShotPos = this.transform.position + new Vector3(1f, 0, 1f);
         Instantiate(ballPrefab, ShotPos, Quaternion.identity);
+        Remaining--;
     }
     
     private void ShotRay()
@@ -59,7 +55,10 @@ public class PlayerController_Test : MonoBehaviour
             pos = hit.collider.gameObject.transform;   //rayの当たったオブジェクトの座標を取得
             block = hit.collider.gameObject;
             MapManager.instance.ChangeBlock(block, pos, DOWN);
-            
+            if(Remaining < 10)
+            {
+                Remaining++;
+            }
         }
     }
 }
