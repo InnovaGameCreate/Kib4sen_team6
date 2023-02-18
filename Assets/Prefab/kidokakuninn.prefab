@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 7841299666567750380}
   - component: {fileID: 6334419023376644596}
   - component: {fileID: 126493086339221916}
-  - component: {fileID: 8223021465398389634}
   - component: {fileID: 980727259036840582}
-  m_Layer: 6
+  - component: {fileID: 5382903890102964960}
+  m_Layer: 7
   m_Name: kidokakuninn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -30,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 5273941213925225755}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 1.2099991, y: 2.41, z: 2.73}
-  m_LocalScale: {x: 0.6, y: 0.6, z: 0.6}
+  m_LocalScale: {x: 0.32, y: 0.32, z: 0.32}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
@@ -99,7 +99,27 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!54 &8223021465398389634
+--- !u!114 &980727259036840582
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5273941213925225755}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72c394e9574648a4b9bf823b60f00b03, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 5
+  okuyuki: 10
+  sitanageRot: 1
+  waittime: 1
+  gensoku: 5
+  gravity: 1
+  gkasokukankaku: 0.1
+  particle: {fileID: 1576920850157119680, guid: 60dc568e68ab13145b8b43c2e3b07981, type: 3}
+--- !u!54 &5382903890102964960
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -115,22 +135,3 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &980727259036840582
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5273941213925225755}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 72c394e9574648a4b9bf823b60f00b03, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 5
-  okuyuki: 0
-  waittime: 1
-  gensoku: 5
-  gravity: 1
-  gkasokukankaku: 0.1
-  particle: {fileID: 1576920850157119680, guid: 60dc568e68ab13145b8b43c2e3b07981, type: 3}
