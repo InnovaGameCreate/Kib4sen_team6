@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CameraMove : MonoBehaviour
 {
-    float x, z;
+    float x, y, z;
     float speed = 0.1f;
 
     public GameObject cam;
@@ -45,14 +45,15 @@ public class CameraMove : MonoBehaviour
     private void FixedUpdate()
     {
         x = 0;
+        y = 0;
         z = 0;
 
         x = Input.GetAxisRaw("Horizontal") * speed;
         z = Input.GetAxisRaw("Vertical") * speed;
 
-        //transform.position += new Vector3(x,0,z);
+        //transform.position += new Vector3(x,y,z);
 
-        transform.position += cam.transform.forward * z / 2 + cam.transform.right * x / 2;
+        transform.position += cam.transform.forward * z * 2 / 5 + cam.transform.right * x * 2 / 5 + cam.transform.forward * y * 0 + cam.transform.right * y * 0;
     }
 
 
