@@ -72,67 +72,73 @@ public class MapManager : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    public void SertchAroundBlocks()
-    {
-
-    }
 
     public void ChangeBlock(GameObject block, Transform blockPos, int Check)
     {
+        if (block != D_CBlockPrefab[4])
+        {
 
-        ChangeSnowState(block, blockPos, Check);
+            ChangeSnowState(block, blockPos, Check);
 
-        if (mapinfos[(int)blockPos.position.x,(int)blockPos.position.z].SnowState == -1) //凹むようにブロックを置き換え
-        {
-            Destroy(block);
-            Instantiate(D_CBlockPrefab[1], blockPos.position, Quaternion.identity);
-        }
-        if (mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowState == -2)
-        {
-            Destroy(block);
-            Instantiate(D_CBlockPrefab[2], Temp_Pos, Quaternion.identity);
-        }
-        if (mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowState == -3)
-        {
-            Destroy(block);
-            Instantiate(D_CBlockPrefab[3], Temp_Pos, Quaternion.identity);
-        }
-        if (mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowState == -4)
-        {
-            Destroy(block);
-        }
+            Temp_Pos = blockPos.position;
 
-        if (mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowState == 1)    //盛り上がるようにブロックを設置
-        {
-            UpFlag = false; //一度だけ実行されるように
-            Instantiate(U_CBlockPrefab[0], Temp_Pos, Quaternion.identity);
-        }
-        if (mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowState == 2)
-        {
-            Destroy(block);
-            UpFlag = false;
-            Instantiate(U_CBlockPrefab[1], Temp_Pos, Quaternion.identity);
-        }
-        if (mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowState == 3)
-        {
-            Destroy(block);
-            UpFlag = false;
-            Instantiate(U_CBlockPrefab[2], Temp_Pos, Quaternion.identity);
-        }
+            if (mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowState == -1) //凹むようにブロックを置き換え
+            {
+                Temp_Pos.y = 0;
+                Destroy(block);
+                Instantiate(D_CBlockPrefab[1], Temp_Pos, Quaternion.identity);
+            }
+            if (mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowState == -2)
+            {
+                Temp_Pos.y = 0;///
+                Destroy(block);
+                Instantiate(D_CBlockPrefab[2], Temp_Pos, Quaternion.identity);
+            }
+            if (mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowState == -3)
+            {
+                Temp_Pos.y = 0;///
+                Destroy(block);
+                Instantiate(D_CBlockPrefab[3], Temp_Pos, Quaternion.identity);
+            }
+            if (mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowState == -4)
+            {
+                Temp_Pos.y = -0.49f;///
+                Destroy(block);
+                Instantiate(D_CBlockPrefab[4], Temp_Pos, Quaternion.identity);
+            }
 
+            if (mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowState == 1)    //盛り上がるようにブロックを設置
+            {
+                Destroy(block);
+                UpFlag = false; //一度だけ実行されるように
+                Temp_Pos.y = 0.1666648f;
+                Instantiate(U_CBlockPrefab[0], Temp_Pos, Quaternion.identity);
+            }
+            if (mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowState == 2)
+            {
+                Temp_Pos.y = 0.3333298f;
+                Destroy(block);
+                UpFlag = false;
+                Instantiate(U_CBlockPrefab[1], Temp_Pos, Quaternion.identity);
+            }
+            if (mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowState == 3)
+            {
+                Temp_Pos.y = 0.5f;
+                Destroy(block);
+                UpFlag = false;
+                Instantiate(U_CBlockPrefab[2], Temp_Pos, Quaternion.identity);
+            }
+        }
     }
 
     private void ChangeSnowState(GameObject block, Transform blockPos, int Check)  //雪玉が当たるたびに状態を変更
     {
-        if(Check == 1)
+        if(Check == 1 && mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowCount <= 10)
             mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowCount++;   //雪玉が当たるたびにプラス
         else
             mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowCount--;   //右クリックのたびにマイナス
+
+        
         
         switch (mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowCount)
         {
@@ -141,19 +147,15 @@ public class MapManager : MonoBehaviour
                 break;
             case -3:
                 mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowState = -2;
-                Temp_Pos = blockPos.position + new Vector3(0, -0.2f, 0);
                 break;
             case -7:
                 mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowState = -3;
-                Temp_Pos = blockPos.position + new Vector3(0, -0.35f, 0);
                 break;
             case -10:
                 mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowState = -4;
                 break;
             case 1:
                 mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowState = 1;
-                mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].y += 1; //ブロックを置くy座標を計算
-                Temp_Pos = blockPos.position + new Vector3(0, mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].y, 0);  //ブロックを設置するy座標を設定
                 UpFlag = true;
                 break;
             case 3:
@@ -163,7 +165,6 @@ public class MapManager : MonoBehaviour
             case 7:
                 mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowState = 3;
                 UpFlag = true;
-                mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowCount = 0; //カウントをリセット
                 break;
         }
     }
