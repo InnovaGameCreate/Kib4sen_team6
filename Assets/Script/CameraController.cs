@@ -6,7 +6,7 @@ public class CameraController : MonoBehaviour
 {
     // Start is called before the first frame update
     [SerializeField] private GameObject player;
-
+    
     void Update()
     {
         // ƒ}ƒEƒX‚ÌˆÚ“®—Ê‚ðŽæ“¾
