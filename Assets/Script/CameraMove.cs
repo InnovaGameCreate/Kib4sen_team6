@@ -16,11 +16,13 @@ public class CameraMove : MonoBehaviour
     //•Ï”‚ÌéŒ¾(Šp“x‚Ì§ŒÀ—p)
     float minX = -60f, maxX = 47f;
 
+    private Animator animator;
     // Start is called before the first frame update
     void Start()
     {
         cameraRot = cam.transform.localRotation;
         characterRot = transform.localRotation;
+        animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -54,6 +56,15 @@ public class CameraMove : MonoBehaviour
         //transform.position += new Vector3(x,y,z);
 
         transform.position += cam.transform.forward * z * 2 / 5 + cam.transform.right * x * 2 / 5 + cam.transform.forward * y * 0 + cam.transform.right * y * 0;
+        
+        if(x > 0 || x < 0 || z > 0 || z < 0)
+        {
+            animator.SetBool("Running", true);
+        }
+        else
+        {
+            animator.SetBool("Running", false);
+        }
     }
 
 

@@ -7,12 +7,14 @@ public class PlayerJumpTest : MonoBehaviour
     private Rigidbody rb;
     private int UpForce;
     private float Distance;
+    private Animator animator;
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         UpForce = 500;
         Distance = 3.0f;
+        animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -26,7 +28,15 @@ public class PlayerJumpTest : MonoBehaviour
         if (Input.GetKeyDown("space"))
         {
             if (isGround)
+            {
                 rb.AddForce(new Vector3(0, UpForce, 0));
+                animator.SetBool("Jump", true);
+            }
         }
+        if (!isGround)
+        {
+            animator.SetBool("Jump", false);
+        }
+
     }
 }
