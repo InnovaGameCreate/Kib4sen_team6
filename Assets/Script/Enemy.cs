@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
+using UnityEngine.AI;
 
 public class Enemy : MonoBehaviour
 {
@@ -21,25 +22,31 @@ public class Enemy : MonoBehaviour
     private float MaxDistance = float.PositiveInfinity; //視界の最大距離
     [SerializeField]
     private int speed;
-    private Vector3 TargetPos;
+    [SerializeField]
+    private float ReloadTime;
+    [SerializeField]
+    private float waitTime;
     private bool isVisible;
+    private float preShotTime;
     private Coroutine shotCoroutine;
     private float TargetDistance;
     private Rigidbody TargetRigid;
-    private LineRenderer line;
     private Vector3 ShotDir;
     private int AreaNum;
     private int ShotArea;
-    const int Right = 0;
-    const int Left = 1;
-    const int Center = 3;
-    //private Vector3 PreTragetPos;   //1フレーム前のターゲットの位置
-    Vector3 Moving_Distance;    //1秒間の移動量
     private bool TurnFlag;  //ターゲットの方向を向き続けるか
     float CosDiv1;
     float CosDiv2;
     float CosDiv3;
     float Temp_prob;
+    bool IntFlag;
+    bool ShotFlag;
+    bool OnceFlag;
+    bool WalkFlag;
+    float time;
+    GameObject ball;
+    Rigidbody ballRigidbody;
+    private NavMeshAgent agent;
     public struct AreaInfo
     {
         public float Probabillity; //そのエリアの事前確率
@@ -49,11 +56,10 @@ public class Enemy : MonoBehaviour
     }
 
     private float After_ProbabillitySum; //事後確率の総数
-    List<int> TargetMovedArea = new List<int>();    //ターゲットが移動したエリアを格納
     AreaInfo[] AreaInfos = new AreaInfo[6]; //各エリアの情報
 
     private Animator characterAnim;
-
+    private AnimatorStateInfo AnimInfo;
 
     enum State
     {
@@ -67,18 +73,41 @@ public class Enemy : MonoBehaviour
     private bool stateEnter = false;
     private float stateTime = 0f;
 
-    void ChangeState(State _nextState)
+
+    private void Start()
     {
-        currentState = _nextState;
-        stateEnter = true;
-        stateTime = 0f;
+        agent = GetComponent<NavMeshAgent>();
+        agent.autoBraking = false;  //目的地に近づくときに速度が落ちないようにする
+        agent.updateRotation = false;   //回転しないようにする
+        OnceFlag = false;
+        IntFlag = true;
+        TurnFlag = true;
+        TargetRigid = Target.GetComponent<Rigidbody>();
+        HavingBallNum = 10;
+        for (int i = 0; i < AreaInfos.Length; i++)
+        {
+            AreaInfos[i].Probabillity = 1f / 6f; //事前確率を初期化
+            AreaInfos[i].After_Probabillity = 1f / 6f;
+            AreaInfos[i].Count = 0f;
+        }
+        characterAnim = GetComponent<Animator>();
+    }
+
+    // 視界判定の結果をGUI出力
+    private void Update()
+    {
+        stateTime += Time.deltaTime;    //現在のステートになってからの時間を計測
+        // 視界判定
+        isVisible = IsVisible();
+        StateManager();
+
     }
 
     public bool IsVisible() //視界に入っているか判定
     {
         var SelfPos = Self.position;    //自身の位置
 
-        TargetPos = Target.position;    //ターゲットの位置
+        var TargetPos = Target.position;    //ターゲットの位置
 
         var SelfDir = Self.forward; //自身の向き
 
@@ -147,39 +176,9 @@ public class Enemy : MonoBehaviour
         return InnerProduct > CosHalf && TargetDistance < MaxDistance;  //角度判定かつ距離判定
     }
 
-    private void Start()
-    {
-        //TurnFlag = true;
-        line = this.GetComponent<LineRenderer>();
-        TargetRigid = Target.GetComponent<Rigidbody>();
-        HavingBallNum = 10;
-        childObj = transform.GetChild(2).gameObject;    //最初の子オブジェクトの座標を取得
-        for (int i = 0; i < AreaInfos.Length; i++)
-        {
-            AreaInfos[i].Probabillity = 1f / 7f; //事前確率を初期化
-            AreaInfos[i].After_Probabillity = 1f / 7f;
-            AreaInfos[i].Count = 0f;
-        }
-        characterAnim = GetComponent<Animator>();
-    }
-
-    // 視界判定の結果をGUI出力
-    private void Update()
-    {
-        /*
-        line.SetPosition(0, childObj.transform.position);
-        line.SetPosition(1, transform.forward * 1000);
-        */
-        stateTime += Time.deltaTime;    //現在のステートになってからの時間を計測
-        // 視界判定
-        isVisible = IsVisible();
-        StateManager();
-
-    }
-
     private void TurnToTarget()    //ターゲットの方を向く
     {
-        var Vector = TargetPos - transform.position;
+        var Vector = Target.position - transform.position;
         Vector.y = 0f;
         transform.rotation = Quaternion.Lerp(
             transform.rotation,
@@ -188,8 +187,74 @@ public class Enemy : MonoBehaviour
 
     }
 
+    private void StateManager()
+    {
+        Debug.Log(currentState);
+        switch (currentState)
+        {
+            case State.Serch:
+                if (stateEnter) //この状態になってから最初のフレームだけ実行
+                {
+                    GotoNextPoint();    //ランダムな地点を取得
+                }
+                if (!agent.pathPending && agent.remainingDistance < 0.5f)
+                    StopHere();
+                if (isVisible)
+                {
+                    ChangeState(State.Attack);
+                    return;
+                }
+                break;
+            case State.Attack:
+                if (stateEnter) //この状態になってから最初のフレームだけ実行
+                {
+                    SetFlag();
+                    //shotCoroutine = StartCoroutine("BallShot");
+                }
 
-    private IEnumerator BallShot()
+                //if(stateTime - preShotTime >= Shot_CD)  //一定間隔で射撃
+                BallShot();
+
+                if (HavingBallNum <= 0) //残弾数がなくなったらリロード
+                {
+                    characterAnim.Play("Snowman_double_Idle");
+                    preShotTime = 0f;
+                    ChangeState(State.Reload);
+                    //shotCoroutine = StopCoroutine("BallShot");
+                }
+
+                if (TurnFlag)
+                    TurnToTarget(); //ターゲットの方を向く
+                
+                break;
+            case State.doNothing:
+                Debug.Log("やることなくなった");
+                break;
+            case State.Reload:
+                if(stateTime >= ReloadTime)
+                {
+                    HavingBallNum = 10;
+                    ChangeState(State.Serch);
+                }
+                break;
+        }
+    }
+
+    void ChangeState(State _nextState)
+    {
+        agent.isStopped = true;
+        currentState = _nextState;
+        stateEnter = true;
+        stateTime = 0f;
+    }
+
+    private void LateUpdate()
+    {
+        if (stateTime != 0)
+            stateEnter = false;
+    }
+
+    /*private IEnumerator BallShot()
     {
         while (true)
         {
@@ -200,15 +265,10 @@ public class Enemy : MonoBehaviour
                 GameObject ball = (GameObject)Instantiate(ballPrefab, childObj.transform.position, Quaternion.identity);
                 Rigidbody ballRigidbody = ball.GetComponent<Rigidbody>();
                 yield return new WaitForSeconds(0.3f);    //射撃準備で0.3秒停止
-                                                          //ballRigidbody.AddForce(transform.forward * speed, ForceMode.Impulse);
-                if (TargetMovedArea.Count != 0)//1回目以外の時
-                    ShotDir = RandomAngle(Bayesian()); //ベイズ推定
-                else
-                    ShotDir = transform.forward;
-
+                ShotDir = RandomAngle(Bayesian()); //ベイズ推定
                 //ShotDir = RandomAngle();
                 ballRigidbody.AddForce(ShotDir.normalized * speed, ForceMode.Impulse);
-                TargetMovedArea.Add(AreaNum);   //投げる瞬間のターゲットの位置を保存
+                AreaInfos[AreaNum].Count++;   //投げる瞬間のターゲットの位置を保存
                 //characterAnim.SetBool("ShotFlag", false);
                 TurnFlag = true;
                 HavingBallNum--;    //持っている雪玉の数を1減らす
@@ -219,42 +279,56 @@ public class Enemy : MonoBehaviour
                     //yield break;
                 }
             }
-            yield return new WaitForSeconds(0.5f);    //1秒待機
+            yield return new WaitForSeconds(0.5f);    //0.5秒待機
         }
-    }
-
-    private void StateManager()
+    }*/
+    private void BallShot()
     {
-        switch (currentState)
-        {
-            case State.Serch:
-                if (stateEnter) //この状態になってから最初のフレームだけ実行
-                { }
-                if (isVisible)
-                {
-                    ChangeState(State.Attack);
-                    return;
+            if (isVisible)
+            {
+                if (IntFlag)    //アニメーションを起動する一回だけ起動
+                { 
+                    characterAnim.Play("Snowman_double_Throw");
+                    TurnFlag = false;   //投げるときは向きを固定
+                    ball = (GameObject)Instantiate(ballPrefab, childObj.transform.position, Quaternion.identity);
+                    ballRigidbody = ball.GetComponent<Rigidbody>();
+                    ball.transform.parent = childObj.gameObject.transform;
+                    IntFlag = false;
                 }
-                break;
-            case State.Attack:
-                if (stateEnter) //この状態になってから最初のフレームだけ実行
+                AnimInfo = characterAnim.GetCurrentAnimatorStateInfo(0);
+            if (!OnceFlag)
+                if (AnimInfo.normalizedTime >= 0.7f && AnimInfo.IsName("Snowman_double_Throw"))    //アニメーションが7割再生されたら射撃
                 {
-                    shotCoroutine = StartCoroutine("BallShot");
+                    ShotFlag = true;
+                    OnceFlag = true;
                 }
-                //if (!characterAnim.GetBool("ShotFlag"))    //フラグがfalseなら
-                if(TurnFlag)
-                    TurnToTarget(); //ターゲットの方を向く
-                break;
-            case State.doNothing:
-                    Debug.Log("やることなくなった");
-                break;
-        }
-    }
-
-    private void LateUpdate()
-    {
-        if (stateTime != 0)
-            stateEnter = false;
+                if(AnimInfo.normalizedTime >= 1f && AnimInfo.IsName("Snowman_double_Throw"))   //終了したら
+                {
+                    characterAnim.Play("Snowman_double_Idle");
+                    TurnFlag = true;    //向きの固定解除
+                    ShotFlag = false;
+                    IntFlag = true;
+                    OnceFlag = false;
+                }
+                    
+                if (ShotFlag)
+                {
+                    ShotDir = RandomAngle(Bayesian()); //ベイズ推定
+                    ball.transform.parent = null;
+                    ballRigidbody.AddForce(ShotDir.normalized * speed, ForceMode.Impulse);
+                    AreaInfos[AreaNum].Count++;   //投げる瞬間のターゲットの位置を保存
+                    
+                    HavingBallNum--;    //持っている雪玉の数を1減らす
+                /*var rnd = Random.Range(1, 11);　// ※ 1～10の範囲でランダムな整数値が返る
+                if (rnd == 1 || rnd == 2)    //ランダムな確率で弾を発射しない状態に移行
+                {
+                    //ChangeState(State.doNothing);
+                    //yield break;
+                }*/
+                    ShotFlag = false;
+                }
+                preShotTime = stateTime;
+            }
     }
 
     private Vector3 RandomAngle(int Area)  //視界内でランダムにボールを投げる
@@ -320,42 +394,107 @@ public class Enemy : MonoBehaviour
 
     private int Bayesian() //ベイズ推定
     {
-        var CountNum = TargetMovedArea.Count - 1;
-        AreaInfos[TargetMovedArea[CountNum]].Count++;   //これまでに各エリアを何回通ったかカウント
-        for (int i = 0; i < AreaInfos.Length; i++)
+        float CountSum = 0;
+        for(int i = 0; i < AreaInfos.Length; i++)
         {
-            var likelihood = AreaInfos[i].Count / (float)TargetMovedArea.Count; //尤度を求める
-            AreaInfos[i].After_Probabillity = AreaInfos[i].Probabillity * likelihood; //事後確率を求める
-            After_ProbabillitySum += AreaInfos[i].After_Probabillity;  //事後確率の総和を求める
+            CountSum += AreaInfos[i].Count;
         }
-        for (int i = 0; i < AreaInfos.Length; i++)
+        if (CountSum != 0)
         {
-            AreaInfos[i].After_Probabillity = AreaInfos[i].After_Probabillity / After_ProbabillitySum;   //各事後確率の正規化
-            /*if (i == 0)
-                ShotArea = 0;
-            else
+            for (int i = 0; i < AreaInfos.Length; i++)
             {
-                if (AreaInfos[i].After_Probabillity > AreaInfos[ShotArea].After_Probabillity)
-                    ShotArea = i;   //常に確率が最も高いエリアを格納
+                var likelihood = AreaInfos[i].Count / CountSum; //尤度を求める
+                AreaInfos[i].After_Probabillity = AreaInfos[i].Probabillity * likelihood; //事後確率を求める
+                After_ProbabillitySum += AreaInfos[i].After_Probabillity;  //事後確率の総和を求める
             }
-            */
-        }
-        float rand = float.MaxValue;   //0.0~1.0を取得
-        for (int i = 0; i < AreaInfos.Length; i++)
-        {
-            Temp_prob += AreaInfos[i].After_Probabillity;   //各エリアの確率を順番に足す
-            if(Temp_prob >= rand) //和がrandを超えた時点でのエリアを返す
+            for (int i = 0; i < AreaInfos.Length; i++)
             {
-                ShotArea = i;
-                break;
-            }
-        }
-        //初期化
-        After_ProbabillitySum = 0;
-        Temp_prob = 0;
+                AreaInfos[i].After_Probabillity = AreaInfos[i].After_Probabillity / After_ProbabillitySum;   //各事後確率の正規化
+                if (AreaInfos[i].After_Probabillity >= 0.5f) //確率分布が収束していたら
+                {
 
+                    ShotArea = i;   //常に確率が最も高いエリアを格納
+                    After_ProbabillitySum = 0;
+                    return ShotArea;
+                }
+
+            }
+            float rand = float.MaxValue;   //0.0~1.0を取得
+            for (int i = 0; i < AreaInfos.Length; i++)
+            {
+                Temp_prob += AreaInfos[i].After_Probabillity;   //各エリアの確率を順番に足す
+                if (Temp_prob >= rand) //和がrandを超えた時点でのエリアを返す
+                {
+                    ShotArea = i;
+                    break;
+                }
+            }
+            //初期化
+            After_ProbabillitySum = 0;
+            Temp_prob = 0;
+        }   
+        else  //データがない時
+        {
+            float rand = float.MaxValue;   //0.0~1.0を取得
+            for (int i = 0; i < AreaInfos.Length; i++)
+            {
+                Temp_prob += AreaInfos[i].Probabillity;   //各エリアの確率を順番に足す
+                if (Temp_prob >= rand) //和がrandを超えた時点でのエリアを返す
+                {
+                    ShotArea = i;
+                    break;
+                }
+            }
+        }
         return ShotArea;   //確率が最も高いエリアを返す
     }
 
 
+     private void SetFlag()
+    {
+        TurnFlag = true;    //向きの固定解除
+        ShotFlag = false;
+        IntFlag = true;
+        OnceFlag = false;
+    }
+    private IEnumerator CalcArriveTime()    //移動予測地点のエリアを取得
+    {
+        var Distance = Vector3.Distance(Self.position, Target.position);   //ターゲットとの距離を計算
+        var ArrivalTime = Distance / speed; //到着までの時間を計算
+        yield return new WaitForSeconds(ArrivalTime);   //到着するまで待機
+        AreaInfos[AreaNum].Count++;   //その時点でのエリアを記憶
+    }
+
+    private void GotoNextPoint()
+    {
+        //NavMeshAgentのストップを解除
+        agent.isStopped = false;
+
+        //ランダムな地点を取得
+        float posX = Random.Range(1, 20);
+        float posY = Random.Range(1, 20);
+
+        Vector3 direction = new Vector3(posX, this.transform.position.y, posY);
+
+        Quaternion rotation =
+            Quaternion.LookRotation(direction - transform.position, Vector3.up);
+        //このオブジェクトの向きを替える
+        transform.rotation = rotation;
+
+        agent.destination = direction;
+        WalkFlag = false;
+    }
+
+    private void StopHere()
+    {
+        agent.isStopped = true;
+        time += Time.deltaTime;
+
+        if (time > waitTime)
+        {
+            GotoNextPoint();
+            time = 0;
+
+        }
+    }
 }
