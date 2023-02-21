@@ -12,27 +12,45 @@ public class PlayerController_Test : MonoBehaviour
     private GameObject block;
     const int DOWN = 0;
     int Remaining = 10;
+    private Animator animator;
 
     // Start is called before the first frame update
     void Start()
     {
         displayCenter = new Vector2(Screen.width / 2, Screen.height / 2);
+        animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
     void Update()
     {
         PlayerMove();
+        //ðŒ‚ª•ª‚©‚èŽŸ‘æ‡ŽŸŽÀ‘•
+        if(Input.GetKey(KeyCode.P))
+        {
+            animator.SetBool("Down", true);
+        }
+        if(Input.GetKeyUp(KeyCode.P))
+        {
+            animator.SetBool("Down", false);
+        }
     }
     private void PlayerMove()
     {
         if (Input.GetMouseButtonDown(0))
         {
-            if(Remaining > 0)
+            if (Remaining > 0)
             {
                 ShotSnowBall();
+                animator.SetBool("Throw", true);
+
             }
         }
+        else
+        {
+            animator.SetBool("Throw", false);
+        }
+
         if (Input.GetMouseButtonDown(1))
         {
             ShotRay();
@@ -59,6 +77,12 @@ public class PlayerController_Test : MonoBehaviour
             {
                 Remaining++;
             }
+            animator.SetBool("Gather", true);
+            Invoke(nameof(GatherStop), 0.5f);
         }
+    }
+    private void GatherStop()
+    {
+        animator.SetBool("Gather", false);
     }
 }
