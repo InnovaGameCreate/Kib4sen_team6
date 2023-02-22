@@ -139,12 +139,6 @@ public class Enemy : MonoBehaviour
 
         var angle = Vector3.Angle(transform.forward, diff) * (axis.y < 0 ? -1 : 1); //ターゲットとの角度を-180～180に変換
 
-        /*
-        Debug.Log(Mathf.Acos(CosDiv1) * Mathf.Rad2Deg);
-        Debug.Log(Mathf.Acos(CosDiv2));
-        Debug.Log(Mathf.Acos(CosDiv3));
-        */
-
         //ターゲットがどの位置にいるか毎フレーム確認
         if (InnerProduct > CosDiv1)
         {
@@ -340,7 +334,8 @@ public class Enemy : MonoBehaviour
                     
                 if (ShotFlag)
                 {
-                    ShotDir = RandomAngle(Bayesian()); //ベイズ推定
+                //ShotDir = RandomAngle(Bayesian()); //ベイズ推定
+                ShotDir = PredictShot();
                     ball.transform.parent = null;
                     ballRigidbody.AddForce(ShotDir.normalized * speed, ForceMode.Impulse);
                     AreaInfos[AreaNum].Count++;   //投げる瞬間のターゲットの位置を保存
@@ -537,5 +532,16 @@ public class Enemy : MonoBehaviour
                 ChangeState(State.Dead);
             }
         }
+    }
+
+    private Vector3 PredictShot()
+    {
+        var TargetPoint = Target.transform.position;    //対象の位置
+        var arrivalTime = Vector3.Distance(TargetPoint, ball.transform.position) / speed;   //対象に到達するまでの時間
+        var TargetVelocity = new Vector3(TargetRigid.velocity.x, 0, TargetRigid.velocity.z);   //横方向への移動速度
+        var predictionPosXZ = TargetVelocity * arrivalTime; //移動距離を計算
+        var predictionCharaPoint = TargetPoint + predictionPosXZ;   //移動後の位置を計算
+        var direction = (predictionCharaPoint - this.transform.position).normalized;    //発射方向
+        return direction;
     }
 }
