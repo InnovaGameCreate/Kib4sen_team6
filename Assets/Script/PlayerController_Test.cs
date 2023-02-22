@@ -28,7 +28,7 @@ public class PlayerController_Test : MonoBehaviour
     {
         PlayerMove();
         //ðŒ‚ª•ª‚©‚èŽŸ‘æ‡ŽŸŽÀ‘•
-        if(Input.GetKey(KeyCode.P))
+        /*if(Input.GetKey(KeyCode.P))
         {
             animator.SetBool("Down", true);
         }
@@ -36,6 +36,7 @@ public class PlayerController_Test : MonoBehaviour
         {
             animator.SetBool("Down", false);
         }
+        */
     }
     private void PlayerMove()
     {
@@ -44,13 +45,13 @@ public class PlayerController_Test : MonoBehaviour
             if (Remaining > 0)
             {
                 ShotSnowBall();
-                animator.SetBool("Throw", true);
+                //animator.SetBool("Throw", true);
 
             }
         }
         else
         {
-            animator.SetBool("Throw", false);
+            //animator.SetBool("Throw", false);
         }
 
         if (Input.GetMouseButtonDown(1))
@@ -83,12 +84,12 @@ public class PlayerController_Test : MonoBehaviour
 
                 YukidamaUI[Remaining - 1].SetActive(true);
             }
-            animator.SetBool("Gather", true);
+            //animator.SetBool("Gather", true);
             Invoke(nameof(GatherStop), 0.5f);
         }
     }
     private void GatherStop()
     {
-        animator.SetBool("Gather", false);
+        //animator.SetBool("Gather", false);
     }
 }

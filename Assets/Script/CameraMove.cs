@@ -59,11 +59,11 @@ public class CameraMove : MonoBehaviour
         
         if(x > 0 || x < 0 || z > 0 || z < 0)
         {
-            animator.SetBool("Running", true);
+            //animator.SetBool("Running", true);
         }
         else
         {
-            animator.SetBool("Running", false);
+            //animator.SetBool("Running", false);
         }
     }
 
