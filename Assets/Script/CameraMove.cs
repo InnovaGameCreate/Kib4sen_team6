@@ -55,9 +55,12 @@ public class CameraMove : MonoBehaviour
 
         //transform.position += new Vector3(x,y,z);
 
-        transform.position += cam.transform.forward * z * 2 / 5 + cam.transform.right * x * 2 / 5 + cam.transform.forward * y * 0 + cam.transform.right * y * 0;
-        
-        if(x > 0 || x < 0 || z > 0 || z < 0)
+        if(animator.GetCurrentAnimatorStateInfo(0).IsName("TopOfJump") || animator.GetCurrentAnimatorStateInfo(0).IsName("Running@loop"))
+        {
+            transform.position += cam.transform.forward * z * 2 / 5 + cam.transform.right * x * 2 / 5 + cam.transform.forward * y * 0 + cam.transform.right * y * 0;
+        }
+
+        if (x > 0 || x < 0 || z > 0 || z < 0)
         {
             animator.SetBool("Running", true);
         }

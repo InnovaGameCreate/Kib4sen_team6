@@ -56,6 +56,7 @@ public class PlayerController_Test : MonoBehaviour
         if (Input.GetMouseButtonDown(1))
         {
             ShotRay();
+            Debug.Log("bo");
         }
     }
     
@@ -83,6 +84,7 @@ public class PlayerController_Test : MonoBehaviour
 
                 YukidamaUI[Remaining - 1].SetActive(true);
             }
+            Debug.Log("le");
             animator.SetBool("Gather", true);
             Invoke(nameof(GatherStop), 0.5f);
         }
