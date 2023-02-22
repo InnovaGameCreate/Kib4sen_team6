@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 01f4eb1c73693428d923f1520032e7f9, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028334, g: 0.22571328, b: 0.3069217, a: 1}
+  m_IndirectSpecularColor: {r: 0.19559154, g: 0.23698464, b: 0.31058574, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -6673,6 +6673,63 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1735957501414348965, guid: 787481964fc05da4684124e8aaa924ee, type: 3}
   m_PrefabInstance: {fileID: 656451571}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &675468905
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 8593065974514788676, guid: ea8bcb98d22c5a24cbdb1f57a4c7c036, type: 3}
+      propertyPath: m_RootOrder
+      value: 33
+      objectReference: {fileID: 0}
+    - target: {fileID: 8593065974514788676, guid: ea8bcb98d22c5a24cbdb1f57a4c7c036, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 49.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8593065974514788676, guid: ea8bcb98d22c5a24cbdb1f57a4c7c036, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 70
+      objectReference: {fileID: 0}
+    - target: {fileID: 8593065974514788676, guid: ea8bcb98d22c5a24cbdb1f57a4c7c036, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 49.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8593065974514788676, guid: ea8bcb98d22c5a24cbdb1f57a4c7c036, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8593065974514788676, guid: ea8bcb98d22c5a24cbdb1f57a4c7c036, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8593065974514788676, guid: ea8bcb98d22c5a24cbdb1f57a4c7c036, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8593065974514788676, guid: ea8bcb98d22c5a24cbdb1f57a4c7c036, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8593065974514788676, guid: ea8bcb98d22c5a24cbdb1f57a4c7c036, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8593065974514788676, guid: ea8bcb98d22c5a24cbdb1f57a4c7c036, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8593065974514788676, guid: ea8bcb98d22c5a24cbdb1f57a4c7c036, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8593065974514788679, guid: ea8bcb98d22c5a24cbdb1f57a4c7c036, type: 3}
+      propertyPath: m_Name
+      value: SnowfallEffect
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: ea8bcb98d22c5a24cbdb1f57a4c7c036, type: 3}
 --- !u!1001 &693154965
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -19920,7 +19977,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &2144869355
 BoxCollider:
   m_ObjectHideFlags: 0
