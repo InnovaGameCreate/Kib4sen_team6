@@ -13,6 +13,8 @@ public class PlayerController_Test : MonoBehaviour
     const int DOWN = 0;
     int Remaining = 10;
 
+    [SerializeField] private GameObject[] YukidamaUI = new GameObject[10];
+
     // Start is called before the first frame update
     void Start()
     {
@@ -44,6 +46,8 @@ public class PlayerController_Test : MonoBehaviour
         Vector3 ShotPos = this.transform.position + new Vector3(1f, 0, 1f);
         Instantiate(ballPrefab, ShotPos, Quaternion.identity);
         Remaining--;
+
+        YukidamaUI[Remaining].SetActive(false);
     }
     
     private void ShotRay()
@@ -58,6 +62,8 @@ public class PlayerController_Test : MonoBehaviour
             if(Remaining < 10)
             {
                 Remaining++;
+
+                YukidamaUI[Remaining - 1].SetActive(true);
             }
         }
     }
