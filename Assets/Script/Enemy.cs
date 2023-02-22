@@ -26,6 +26,8 @@ public class Enemy : MonoBehaviour
     private float ReloadTime;
     [SerializeField]
     private float waitTime;
+    [SerializeField]
+    private int HP;
     private bool isVisible;
     private float preShotTime;
     private Coroutine shotCoroutine;
@@ -66,6 +68,7 @@ public class Enemy : MonoBehaviour
         Serch,
         Attack,
         Reload,
+        Dead,
         doNothing,
     }
 
@@ -76,6 +79,8 @@ public class Enemy : MonoBehaviour
 
     private void Start()
     {
+        Debug.Log("A");
+        HP = 10;
         agent = GetComponent<NavMeshAgent>();
         agent.autoBraking = false;  //目的地に近づくときに速度が落ちないようにする
         agent.updateRotation = false;   //回転しないようにする
@@ -100,9 +105,16 @@ public class Enemy : MonoBehaviour
         // 視界判定
         isVisible = IsVisible();
         StateManager();
+        if (Input.GetKey(KeyCode.I))
+        {
+            HP = 0;
+            if (HP == 0)
+            {
+                ChangeState(State.Dead);
+            }
+        }
 
     }
-
     public bool IsVisible() //視界に入っているか判定
     {
         var SelfPos = Self.position;    //自身の位置
@@ -189,16 +201,20 @@ public class Enemy : MonoBehaviour
 
     private void StateManager()
     {
-        Debug.Log(currentState);
+        //Debug.Log(currentState);
         switch (currentState)
         {
             case State.Serch:
                 if (stateEnter) //この状態になってから最初のフレームだけ実行
                 {
+                    /*
                     GotoNextPoint();    //ランダムな地点を取得
+                    */
                 }
+                /*
                 if (!agent.pathPending && agent.remainingDistance < 0.5f)
                     StopHere();
+                */
                 if (isVisible)
                 {
                     ChangeState(State.Attack);
@@ -237,12 +253,24 @@ public class Enemy : MonoBehaviour
                     ChangeState(State.Serch);
                 }
                 break;
+            case State.Dead:
+                if (stateEnter) //この状態になってから最初のフレームだけ実行
+                {
+                    characterAnim.Play("Snowman_double_Defeat");
+                }
+                AnimInfo = characterAnim.GetCurrentAnimatorStateInfo(0);
+                if (AnimInfo.normalizedTime >= 1f && AnimInfo.IsName("Snowman_double_Defeat"))   //終了したら
+                {
+                    this.gameObject.SetActive(false);
+                    GameManager.instance.EnemyDeath();
+                }
+                break;
         }
     }
 
     void ChangeState(State _nextState)
     {
-        agent.isStopped = true;
+        //agent.isStopped = true;
         currentState = _nextState;
         stateEnter = true;
         stateTime = 0f;
@@ -465,6 +493,7 @@ public class Enemy : MonoBehaviour
         AreaInfos[AreaNum].Count++;   //その時点でのエリアを記憶
     }
 
+    /*
     private void GotoNextPoint()
     {
         //NavMeshAgentのストップを解除
@@ -495,6 +524,19 @@ public class Enemy : MonoBehaviour
             GotoNextPoint();
             time = 0;
 
+        }
+    }
+    */
+
+    void OnCollisionEnter(Collision collision)
+    {
+        if(collision.gameObject.tag == "SnowBall")
+        {
+            HP--;
+            if(HP == 0)
+            {
+                ChangeState(State.Dead);
+            }
         }
     }
 }
