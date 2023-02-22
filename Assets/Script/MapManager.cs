@@ -76,6 +76,8 @@ public class MapManager : MonoBehaviour
         Temp_Pos = blockPos.position;
         Temp_Pos.y = -0.49f;///
         Destroy(block);
+        GameObject takibiground = D_CBlockPrefab[4];
+        takibiground.tag = "Untagged";
         Instantiate(D_CBlockPrefab[4], Temp_Pos, Quaternion.identity);
     }
         
