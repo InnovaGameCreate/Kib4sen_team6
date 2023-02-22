@@ -79,7 +79,6 @@ public class Enemy : MonoBehaviour
 
     private void Start()
     {
-        Debug.Log("A");
         HP = 10;
         agent = GetComponent<NavMeshAgent>();
         agent.autoBraking = false;  //–Ú“I’n‚É‹ß‚Ã‚­‚Æ‚«‚É‘¬“x‚ª—Ž‚¿‚È‚¢‚æ‚¤‚É‚·‚é
