@@ -27,7 +27,7 @@ public class PlayerController_Test : MonoBehaviour
     void Update()
     {
         PlayerMove();
-        //ğŒ‚ª•ª‚©‚èŸ‘æ‡ŸÀ‘•
+        //æ¡ä»¶ãŒåˆ†ã‹ã‚Šæ¬¡ç¬¬é †æ¬¡å®Ÿè£…
         /*if(Input.GetKey(KeyCode.P))
         {
             animator.SetBool("Down", true);
@@ -57,6 +57,7 @@ public class PlayerController_Test : MonoBehaviour
         if (Input.GetMouseButtonDown(1))
         {
             ShotRay();
+            Debug.Log("bo");
         }
     }
     
@@ -75,7 +76,7 @@ public class PlayerController_Test : MonoBehaviour
         RaycastHit hit;
         if(Physics.Raycast(ray, out hit))
         {
-            pos = hit.collider.gameObject.transform;   //ray‚Ì“–‚½‚Á‚½ƒIƒuƒWƒFƒNƒg‚ÌÀ•W‚ğæ“¾
+            pos = hit.collider.gameObject.transform;   //rayã®å½“ãŸã£ãŸã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®åº§æ¨™ã‚’å–å¾—
             block = hit.collider.gameObject;
             MapManager.instance.ChangeBlock(block, pos, DOWN);
             if(Remaining < 10)
@@ -84,7 +85,10 @@ public class PlayerController_Test : MonoBehaviour
 
                 YukidamaUI[Remaining - 1].SetActive(true);
             }
-            //animator.SetBool("Gather", true);
+
+            Debug.Log("le");
+            animator.SetBool("Gather", true);
+
             Invoke(nameof(GatherStop), 0.5f);
         }
     }
