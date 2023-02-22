@@ -12,12 +12,13 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int SaveInt;    //敵の最大数を常に保存
     [SerializeField] private float SaveTime;    //カウントダウンの開始時間を常に保存
     private GameObject Player;
+    [SerializeField]
     private GameObject Result;
     private GameObject MainUI;
     private GameObject CountDown;
     private GameObject Timer;
-    private float starttime;
-    private float counttime;
+    private float starttime;    //カウントダウンの時間
+    private float counttime;    //制限時間
     private float minute;
     private float second;
     private bool CountDownFlag;
@@ -36,19 +37,9 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        CountDownFlag = true;
-        counttime = LimitTime;
-        SaveInt = EnemyCount;
         SceneManager.sceneLoaded += OnSceneLoaded;
-        MainUI = GameObject.Find("StartUI");
-        Timer = GameObject.Find("Timer");
-        CountDown = GameObject.Find("StartCountdown");
-        Player = GameObject.Find("Player");
-        Result = GameObject.Find("ClearCanvas");
-        Result.SetActive(false);
-        Player.GetComponent<PlayerController_Test>().enabled = false;
-        Player.GetComponent<CameraMove>().enabled = false;
-        starttime = SaveTime;
+        //Debug.Log("aa");
+        Initialize();
     }
 
     // Update is called once per frame
@@ -59,7 +50,6 @@ public class GameManager : MonoBehaviour
 
     public void ClearScene()
     {
-        Debug.Log("A");
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
         Player.GetComponent<PlayerController_Test>().enabled = false;
@@ -86,19 +76,7 @@ public class GameManager : MonoBehaviour
     {
         if (scene.name == "大西")
         {
-            /*
-            CountDownFlag = true;
-            Player = GameObject.Find("Player");
-            Result = GameObject.Find("ClearCanvas");
-            MainUI = GameObject.Find("StartUI");
-            CountDown = GameObject.Find("StartCountdown");
-            Timer = GameObject.Find("Timer");
-            Result.SetActive(false);
-            Player.GetComponent<PlayerController_Test>().enabled = false;
-            Player.GetComponent<CameraMove>().enabled = false;
-            CountDown.GetComponent<Text>().enabled = true; 
-            */
-            Start();
+            Initialize();
         }
     }
 
@@ -133,6 +111,7 @@ public class GameManager : MonoBehaviour
 
         if (!Result.activeSelf)
         {
+
             counttime -= Time.deltaTime;
             minute = (int)counttime / 60;
             second = (int)counttime % 60;
@@ -142,6 +121,23 @@ public class GameManager : MonoBehaviour
                 Timer.GetComponent<Text>().text = minute.ToString() + "分 " + second.ToString() + "秒";
         }
 
+    }
+
+    private void Initialize()
+    {
+        
+        CountDownFlag = true;
+        counttime = LimitTime;
+        SaveInt = EnemyCount;
+        MainUI = GameObject.Find("StartUI");
+        Timer = GameObject.Find("Timer");
+        CountDown = GameObject.Find("StartCountdown");
+        Player = GameObject.Find("Player");
+        Result = GameObject.Find("ClearCanvas");
+        Result.SetActive(false);
+        Player.GetComponent<PlayerController_Test>().enabled = false;
+        Player.GetComponent<CameraMove>().enabled = false;
+        starttime = SaveTime;
     }
 }
 
