@@ -71,7 +71,14 @@ public class MapManager : MonoBehaviour
         DownFlag = false;
     }
 
-    // Update is called once per frame
+    public void TakibiAroundChange(GameObject block, Transform blockPos)
+    {
+        Temp_Pos = blockPos.position;
+        Temp_Pos.y = -0.49f;///
+        Destroy(block);
+        Instantiate(D_CBlockPrefab[4], Temp_Pos, Quaternion.identity);
+    }
+        
 
     public void ChangeBlock(GameObject block, Transform blockPos, int Check)
     {
