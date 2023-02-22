@@ -7,6 +7,8 @@ TagManager:
   - Snow
   - Grand
   - Takibi
+  - EnemyBall
+  - SnowBall
   layers:
   - Default
   - TransparentFX
