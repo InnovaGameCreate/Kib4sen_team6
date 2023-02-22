@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Taion : MonoBehaviour
 {
@@ -16,6 +17,9 @@ public class Taion : MonoBehaviour
     private float cx;
     private float plux;
     private float taicp;
+
+    [SerializeField] private Slider TaionBar;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -25,6 +29,7 @@ public class Taion : MonoBehaviour
         cp = taion;
         oncp = taion;
         cx = 0;
+        TaionBar.value = 1;
     }
 
     // Update is called once per frame
@@ -36,10 +41,12 @@ public class Taion : MonoBehaviour
             {
                 x -= dropspeed * Time.deltaTime;
                 taion = oncp / (1 + Mathf.Exp((-x - plux) * a));  //0Ç…Ç»ÇÁÇ»Ç¢ÇÃÇ≈èåèïtÇØÇ∑ÇÈÇ∆Ç´Ç»Ç«ÇÕíçà”
+                TaionBar.value = taion / cp;
             }
             else
             {
                 taion = 0;
+                TaionBar.value = 0;
             }
             
         }
@@ -72,11 +79,13 @@ public class Taion : MonoBehaviour
             {
                 x += risespeed * Time.deltaTime;
                 taion = oncp / (1 + Mathf.Exp((-x + cx) * a)) + taicp;
+                TaionBar.value = taion / cp;
             }
 
             else
             {
                 taion = 100;
+                TaionBar.value = 1;
             }
         }
     }
