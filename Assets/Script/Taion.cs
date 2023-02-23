@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class Taion : MonoBehaviour
 {
-    [SerializeField] private float taion;  //シグモイド関数のような動きをします
+    [SerializeField] public float taion;  //シグモイド関数のような動きをします
     [SerializeField] private float time;  //体温が0になるまでの大体の時間
     private float a;
     private float x; //シグモイド関数におけるx軸に相当。体温を動かしたいときはここを動かす。
@@ -48,7 +48,7 @@ public class Taion : MonoBehaviour
             {
                 taion = 0;
                 TaionBar.value = 0;
-                //GameManager.instance.GameOverScene();
+                GameManager.instance.GameOverScene();
             }
         }
     }
