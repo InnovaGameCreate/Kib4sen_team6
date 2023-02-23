@@ -10,6 +10,7 @@ TagManager:
   - EnemyBall
   - SnowBall
   - EnemySpown
+  - PlayerSpown
   layers:
   - Default
   - TransparentFX

@@ -22,7 +22,6 @@ public class GameManager : MonoBehaviour
     private float counttime;    //制限時間
     private float minute;
     private float second;
-    private float SaveTaion;
     private bool CountDownFlag;
     private GameObject[] EnemySpownPos;
     [SerializeField]
@@ -39,6 +38,8 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -118,7 +119,6 @@ public class GameManager : MonoBehaviour
                 Player.GetComponent<PlayerController_Test>().enabled = true;
                 Player.GetComponent<CameraMove>().enabled = true;
                 CountDown.SetActive(false); //カウントダウンを非表示にする
-                Player.GetComponent<Taion>().taion = SaveTaion;
             }
         }
 
@@ -137,11 +137,11 @@ public class GameManager : MonoBehaviour
     private void Initialize()
     {
         EnemySpownPos = GameObject.FindGameObjectsWithTag("EnemySpown");    //特定のタグのオブジェクトを格納
-        for(int i = 0; i < EnemyNum; i++)
+        for (int i = 0; i < EnemyNum; i++)
         {
-            var Pos = EnemySpownPos[i].transform.position;
+            var EnemyPos = EnemySpownPos[i].transform.position;
             Destroy(EnemySpownPos[i]);
-            Instantiate(EnemyPrefab, Pos, Quaternion.identity);
+            Instantiate(EnemyPrefab, EnemyPos, Quaternion.identity);
         }
         CountDownFlag = true;
         counttime = LimitTime;
@@ -155,7 +155,6 @@ public class GameManager : MonoBehaviour
         GameOverCanvas.SetActive(false);
         Player.GetComponent<PlayerController_Test>().enabled = false;
         Player.GetComponent<CameraMove>().enabled = false;
-        SaveTaion = Player.GetComponent<Taion>().taion;
         starttime = SaveTime;
         CalcTime();
     }
