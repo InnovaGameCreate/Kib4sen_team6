@@ -48,8 +48,8 @@ public class Taion : MonoBehaviour
             {
                 taion = 0;
                 TaionBar.value = 0;
+                GameManager.instance.GameOverScene();
             }
-            
         }
     }
 

@@ -27,4 +27,9 @@ public class ButtonScript : MonoBehaviour
     {
         GameManager.instance.EndButton();
     }
+
+    public void Title()
+    {
+        GameManager.instance.StartButton();
+    }
 }

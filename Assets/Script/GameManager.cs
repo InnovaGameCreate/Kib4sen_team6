@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float SaveTime;    //カウントダウンの開始時間を常に保存
     private GameObject Player;
     [SerializeField]
+    public GameObject GameOverCanvas;
     private GameObject Result;
     private GameObject MainUI;
     private GameObject CountDown;
@@ -48,6 +49,15 @@ public class GameManager : MonoBehaviour
         MainUIController();
     }
 
+    public void GameOverScene()
+    {
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+        Player.GetComponent<PlayerController_Test>().enabled = false;
+        Player.GetComponent<CameraMove>().enabled = false;
+        GameOverCanvas.SetActive(true);
+    }
+
     public void ClearScene()
     {
         Cursor.visible = true;
@@ -67,14 +77,21 @@ public class GameManager : MonoBehaviour
 
     public void RetryButton()
     {
-        SceneManager.LoadScene("大西");
+        SceneManager.LoadScene("ゲーム画面(仮)");
+        EnemyCount = SaveInt;
+        starttime = SaveTime;
+    }
+
+    public void StartButton()
+    {
+        SceneManager.LoadScene("ゲーム画面(仮)");
         EnemyCount = SaveInt;
         starttime = SaveTime;
     }
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (scene.name == "大西")
+        if (scene.name == "ゲーム画面(仮)")
         {
             Initialize();
         }
@@ -109,9 +126,8 @@ public class GameManager : MonoBehaviour
 
             
 
-        if (!Result.activeSelf)
+        if (!Result.activeSelf && !GameOverCanvas.activeSelf)
         {
-
             counttime -= Time.deltaTime;
             minute = (int)counttime / 60;
             second = (int)counttime % 60;
@@ -134,7 +150,9 @@ public class GameManager : MonoBehaviour
         CountDown = GameObject.Find("StartCountdown");
         Player = GameObject.Find("Player");
         Result = GameObject.Find("ClearCanvas");
+        GameOverCanvas = GameObject.Find("GameOverCanvas");
         Result.SetActive(false);
+        GameOverCanvas.SetActive(false);
         Player.GetComponent<PlayerController_Test>().enabled = false;
         Player.GetComponent<CameraMove>().enabled = false;
         starttime = SaveTime;
