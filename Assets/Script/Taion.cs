@@ -17,7 +17,7 @@ public class Taion : MonoBehaviour
     private float cx;
     private float plux;
     private float taicp;
-    [SerializeField] private float YukidamaTDamage; //雪玉がダメージを受けたときにどれ位の時間分減るか
+    [SerializeField] private float YukidamaDamage; //雪玉がダメージを受けたときにどれ位減るか
 
     [SerializeField] private Slider TaionBar;
 
@@ -48,16 +48,11 @@ public class Taion : MonoBehaviour
             {
                 taion = 0;
                 TaionBar.value = 0;
-                GameManager.instance.GameOverScene();
+                //GameManager.instance.GameOverScene();
             }
         }
     }
 
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject.CompareTag("EnemyBall"))
-            x -= YukidamaTDamage;
-    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -77,6 +72,12 @@ public class Taion : MonoBehaviour
             a = -Mathf.Log(1 / 0.999f - 1, Mathf.Exp(1)) / cx;
             oncp = cp - taion;
             taicp = taion;
+
+        }
+
+        if (other.CompareTag("EnemyBall"))
+        {
+            x = -Mathf.Log(((oncp / (taion - YukidamaDamage)) - 1) / Mathf.Exp(-plux * a)) / a;
         }
     }
 
