@@ -184,8 +184,14 @@ public class Enemy : MonoBehaviour
 
 
         NearFlag = TargetDistance <= distance;
+        var visiable = InnerProduct > CosHalf && TargetDistance < MaxDistance;  //角度判定かつ距離判定
+        if (visiable)
+            visiable = JudgWall(TargetDir, TargetDistance);
+        if(NearFlag)
+            NearFlag = JudgWall(TargetDir, TargetDistance);
 
-        return InnerProduct > CosHalf && TargetDistance < MaxDistance;  //角度判定かつ距離判定
+
+        return visiable;
     }
 
     private void TurnToTarget(float t)    //ターゲットの方を向く
@@ -585,5 +591,29 @@ public class Enemy : MonoBehaviour
             TurnToTarget(0.03f);
         else if (isVisible) //視界に入っているとき
             TurnToTarget(0.5f);
+    }
+
+    private bool JudgWall(Vector3 Direction, float Distance) //壁があるか判定
+    {
+        Ray ray;
+        RaycastHit hit;
+
+        ray = new Ray(this.transform.position, Direction);  //プレイヤーの方向にRayをとばす
+        
+        if(Physics.Raycast(ray.origin, ray.direction * Distance, out hit))
+        {
+            if(hit.collider.CompareTag("Player"))
+            {
+                Debug.Log("見える");
+                return true;
+            }
+            else
+            {
+                Debug.Log("みえない");
+                return false;
+            }
+        }
+        return false;
+        
     }
 }
