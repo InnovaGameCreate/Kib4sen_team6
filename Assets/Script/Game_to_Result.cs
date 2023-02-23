@@ -15,7 +15,7 @@ public class Game_to_Result : MonoBehaviour
     void Update()
     {
         //これはリザルト画面への遷移するための条件ではありません。
-        if (Input.anyKey)
+        if (Input.GetKeyDown(KeyCode.L))
         {
             SceneManager.LoadScene("リザルト画面");
         }
