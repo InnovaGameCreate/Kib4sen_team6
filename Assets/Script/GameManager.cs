@@ -51,19 +51,13 @@ public class GameManager : MonoBehaviour
 
     public void GameOverScene()
     {
-        Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.None;
-        Player.GetComponent<PlayerController_Test>().enabled = false;
-        Player.GetComponent<CameraMove>().enabled = false;
+        EndConduct();
         GameOverCanvas.SetActive(true);
     }
 
     public void ClearScene()
     {
-        Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.None;
-        Player.GetComponent<PlayerController_Test>().enabled = false;
-        Player.GetComponent<CameraMove>().enabled = false;
+        EndConduct();
         Result.SetActive(true);
     }
 
@@ -135,6 +129,8 @@ public class GameManager : MonoBehaviour
                 Timer.GetComponent<Text>().text = minute.ToString() + "•ª" + second.ToString() + "•b";
             else
                 Timer.GetComponent<Text>().text = minute.ToString() + "•ª " + second.ToString() + "•b";
+            if (counttime <= 0) //ŽžŠÔ‚ªØ‚ê‚½‚ç
+                GameOverScene();
         }
 
     }
@@ -156,6 +152,15 @@ public class GameManager : MonoBehaviour
         Player.GetComponent<PlayerController_Test>().enabled = false;
         Player.GetComponent<CameraMove>().enabled = false;
         starttime = SaveTime;
+    }
+
+    private void EndConduct()
+    {
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+        Player.GetComponent<PlayerController_Test>().enabled = false;
+        Player.GetComponent<CameraMove>().enabled = false;
+        Player.GetComponent<Taion>().enabled = false;
     }
 }
 
