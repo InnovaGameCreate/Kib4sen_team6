@@ -12,7 +12,7 @@ public class PlayerJumpTest : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        UpForce = 400;
+        UpForce = 200;
         Distance = 0.3f;
         animator = GetComponent<Animator>();
     }
