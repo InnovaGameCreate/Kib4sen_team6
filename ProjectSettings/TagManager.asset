@@ -9,6 +9,7 @@ TagManager:
   - Takibi
   - EnemyBall
   - SnowBall
+  - EnemySpown
   layers:
   - Default
   - TransparentFX

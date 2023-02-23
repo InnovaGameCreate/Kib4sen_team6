@@ -28,6 +28,8 @@ public class Enemy : MonoBehaviour
     private float waitTime;
     [SerializeField]
     private int HP;
+    [SerializeField]
+    private float distance; //足音が聞こえる範囲
     private bool isVisible;
     private float preShotTime;
     private Coroutine shotCoroutine;
@@ -46,6 +48,7 @@ public class Enemy : MonoBehaviour
     bool ShotFlag;
     bool OnceFlag;
     bool WalkFlag;
+    bool NearFlag; //足音が聞こえる範囲にいるか
     float Rand;
     Vector3 Vector;
     float time;
@@ -82,6 +85,7 @@ public class Enemy : MonoBehaviour
 
     private void Start()
     {
+        Target = GameObject.Find("Player").transform;
         HP = 10;
         agent = GetComponent<NavMeshAgent>();
         agent.autoBraking = false;  //目的地に近づくときに速度が落ちないようにする
@@ -179,19 +183,19 @@ public class Enemy : MonoBehaviour
         }
 
 
-        //ShotDir = RandomAngle(CosDiv1);
+        NearFlag = TargetDistance <= distance;
 
         return InnerProduct > CosHalf && TargetDistance < MaxDistance;  //角度判定かつ距離判定
     }
 
-    private void TurnToTarget()    //ターゲットの方を向く
+    private void TurnToTarget(float t)    //ターゲットの方を向く
     {
         var Vector = Target.position - transform.position;
         Vector.y = 0f;
         transform.rotation = Quaternion.Lerp(
             transform.rotation,
             Quaternion.LookRotation(Vector),
-            1);
+            t);
 
     }
 
@@ -212,6 +216,7 @@ public class Enemy : MonoBehaviour
                 if (!agent.pathPending && agent.remainingDistance < 0.5f)
                     StopHere();
                 */
+                LookTargetDirection();
                 if (isVisible)
                 {
                     ChangeState(State.Attack);
@@ -241,7 +246,7 @@ public class Enemy : MonoBehaviour
                 }
 
                 if (TurnFlag)
-                    TurnToTarget(); //ターゲットの方を向く
+                    LookTargetDirection(); //ターゲットの方を向く
 
                 if(!isVisible)  //見失うと探索へ戻る
                 {
@@ -326,7 +331,6 @@ public class Enemy : MonoBehaviour
                 { 
                     characterAnim.Play("Snowman_double_Throw");
                     TurnFlag = false;   //投げるときは向きを固定
-                Debug.Log("AA");
                     ball = (GameObject)Instantiate(ballPrefab, childObj.transform.position, Quaternion.identity);
                     ballRigidbody = ball.GetComponent<Rigidbody>();
                     ball.transform.parent = childObj.gameObject.transform;
@@ -573,5 +577,13 @@ public class Enemy : MonoBehaviour
             SerchTurnFlag = true;
         }
             
+    }
+
+    private void LookTargetDirection()
+    {
+        if (!isVisible && NearFlag)  //視界には入っていないが音が聞こえるぐらい近い時
+            TurnToTarget(0.03f);
+        else if (isVisible) //視界に入っているとき
+            TurnToTarget(0.5f);
     }
 }
