@@ -57,16 +57,16 @@ public class CameraMove : MonoBehaviour
 
         if(animator.GetCurrentAnimatorStateInfo(0).IsName("TopOfJump") || animator.GetCurrentAnimatorStateInfo(0).IsName("Running@loop"))
         {
-            transform.position += cam.transform.forward * z * 2 / 5 + cam.transform.right * x * 2 / 5 + cam.transform.forward * y * 0 + cam.transform.right * y * 0;
+            transform.position += cam.transform.forward * z * 2 / 5 + cam.transform.right * x * 2 / 5 ;
         }
 
         if (x > 0 || x < 0 || z > 0 || z < 0)
         {
-            //animator.SetBool("Running", true);
+            animator.SetBool("Running", true);
         }
         else
         {
-            //animator.SetBool("Running", false);
+            animator.SetBool("Running", false);
         }
     }
 
