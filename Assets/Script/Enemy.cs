@@ -604,12 +604,12 @@ public class Enemy : MonoBehaviour
         {
             if(hit.collider.CompareTag("Player"))
             {
-                Debug.Log("Œ©‚¦‚é");
+                //Debug.Log("Œ©‚¦‚é");
                 return true;
             }
             else
             {
-                Debug.Log("‚Ý‚¦‚È‚¢");
+                //Debug.Log("‚Ý‚¦‚È‚¢");
                 return false;
             }
         }

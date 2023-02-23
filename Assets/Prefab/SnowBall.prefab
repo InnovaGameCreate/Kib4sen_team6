@@ -128,3 +128,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LifeTime: 5
+  particle: {fileID: 1576920850157119683, guid: 60dc568e68ab13145b8b43c2e3b07981, type: 3}

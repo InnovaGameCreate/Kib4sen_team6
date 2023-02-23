@@ -22,6 +22,7 @@ public class GameManager : MonoBehaviour
     private float counttime;    //制限時間
     private float minute;
     private float second;
+    private float SaveTaion;
     private bool CountDownFlag;
     private GameObject[] EnemySpownPos;
     [SerializeField]
@@ -117,6 +118,7 @@ public class GameManager : MonoBehaviour
                 Player.GetComponent<PlayerController_Test>().enabled = true;
                 Player.GetComponent<CameraMove>().enabled = true;
                 CountDown.SetActive(false); //カウントダウンを非表示にする
+                Player.GetComponent<Taion>().taion = SaveTaion;
             }
         }
 
@@ -153,6 +155,7 @@ public class GameManager : MonoBehaviour
         GameOverCanvas.SetActive(false);
         Player.GetComponent<PlayerController_Test>().enabled = false;
         Player.GetComponent<CameraMove>().enabled = false;
+        SaveTaion = Player.GetComponent<Taion>().taion;
         starttime = SaveTime;
         CalcTime();
     }
