@@ -37,6 +37,7 @@ public class Enemy : MonoBehaviour
     private int AreaNum;
     private int ShotArea;
     private bool TurnFlag;  //ターゲットの方向を向き続けるか
+    private bool SerchTurnFlag;
     float CosDiv1;
     float CosDiv2;
     float CosDiv3;
@@ -45,6 +46,8 @@ public class Enemy : MonoBehaviour
     bool ShotFlag;
     bool OnceFlag;
     bool WalkFlag;
+    float Rand;
+    Vector3 Vector;
     float time;
     GameObject ball;
     Rigidbody ballRigidbody;
@@ -203,6 +206,7 @@ public class Enemy : MonoBehaviour
                     /*
                     GotoNextPoint();    //ランダムな地点を取得
                     */
+                    characterAnim.Play("Snowman_double_Idle");
                 }
                 /*
                 if (!agent.pathPending && agent.remainingDistance < 0.5f)
@@ -212,6 +216,10 @@ public class Enemy : MonoBehaviour
                 {
                     ChangeState(State.Attack);
                     return;
+                }
+                else
+                {
+                    //RandumRotate();
                 }
                 break;
             case State.Attack:
@@ -226,7 +234,7 @@ public class Enemy : MonoBehaviour
 
                 if (HavingBallNum <= 0) //残弾数がなくなったらリロード
                 {
-                    characterAnim.Play("Snowman_double_Idle");
+                    
                     preShotTime = 0f;
                     ChangeState(State.Reload);
                     //shotCoroutine = StopCoroutine("BallShot");
@@ -234,13 +242,20 @@ public class Enemy : MonoBehaviour
 
                 if (TurnFlag)
                     TurnToTarget(); //ターゲットの方を向く
+
+                if(!isVisible)  //見失うと探索へ戻る
+                {
+                    ChangeState(State.Serch);
+                }
                 
                 break;
             case State.doNothing:
                 Debug.Log("やることなくなった");
                 break;
             case State.Reload:
-                if(stateTime >= ReloadTime)
+                if (stateEnter) //この状態になってから最初のフレームだけ実行
+                    characterAnim.Play("Snowman_double_Idle");
+                if (stateTime >= ReloadTime)
                 {
                     HavingBallNum = 10;
                     ChangeState(State.Serch);
@@ -311,6 +326,7 @@ public class Enemy : MonoBehaviour
                 { 
                     characterAnim.Play("Snowman_double_Throw");
                     TurnFlag = false;   //投げるときは向きを固定
+                Debug.Log("AA");
                     ball = (GameObject)Instantiate(ballPrefab, childObj.transform.position, Quaternion.identity);
                     ballRigidbody = ball.GetComponent<Rigidbody>();
                     ball.transform.parent = childObj.gameObject.transform;
@@ -360,7 +376,6 @@ public class Enemy : MonoBehaviour
         {
             var Deg = Mathf.Acos(CosDiv1) * Mathf.Rad2Deg;
             var rand = Random.Range(0, Deg);    //0～θ/6の範囲でランダムな角度を獲得
-            var RandRad = rand * Mathf.Deg2Rad; //degをradに変換
             var RandomDir = Quaternion.Euler(0, rand, 0) * transform.forward;   //ランダムな発射方向
             return RandomDir;
         }
@@ -369,7 +384,6 @@ public class Enemy : MonoBehaviour
             var MaxDeg = Mathf.Acos(CosDiv2) * Mathf.Rad2Deg;
             var MinDeg = Mathf.Acos(CosDiv1) * Mathf.Rad2Deg;
             var rand = Random.Range(MinDeg, MaxDeg);    //MinDeg～MaxDigの範囲でランダムな角度を獲得
-            var RandRad = rand * Mathf.Deg2Rad; //degをradに変換
             var RandomDir = Quaternion.Euler(0, rand, 0) * transform.forward;   //ランダムな発射方向
             return RandomDir;
         }
@@ -378,7 +392,6 @@ public class Enemy : MonoBehaviour
             var MaxDeg = Mathf.Acos(CosDiv3) * Mathf.Rad2Deg;
             var MinDeg = Mathf.Acos(CosDiv2) * Mathf.Rad2Deg;
             var rand = Random.Range(MinDeg, MaxDeg);    //MinDeg～MaxDigの範囲でランダムな角度を獲得
-            var RandRad = rand * Mathf.Deg2Rad; //degをradに変換
             //var RandomDir = transform.forward + new Vector3(Mathf.Sin(RandRad), 0, Mathf.Cos(RandRad));   //ランダムな発射方向
             var RandomDir = Quaternion.Euler(0, rand, 0) * transform.forward;   //ランダムな発射方向
             return RandomDir;
@@ -387,7 +400,6 @@ public class Enemy : MonoBehaviour
         {
             var Deg = Mathf.Acos(CosDiv1) * Mathf.Rad2Deg;
             var rand = Random.Range(-Deg, 0);    //-θ/6～0の範囲でランダムな角度を獲得
-            var RandRad = rand * Mathf.Deg2Rad; //degをradに変換
             var RandomDir = Quaternion.Euler(0, rand, 0) * transform.forward;   //ランダムな発射方向
             return RandomDir;
         }
@@ -396,7 +408,6 @@ public class Enemy : MonoBehaviour
             var MaxDeg = Mathf.Acos(CosDiv2) * Mathf.Rad2Deg;
             var MinDeg = Mathf.Acos(CosDiv1) * Mathf.Rad2Deg;
             var rand = Random.Range(MinDeg, MaxDeg);    //MinDeg～MaxDigの範囲でランダムな角度を獲得
-            var RandRad = rand * Mathf.Deg2Rad; //degをradに変換
             var RandomDir = Quaternion.Euler(0, -rand, 0) * transform.forward;   //ランダムな発射方向
             return RandomDir;
         }
@@ -405,7 +416,6 @@ public class Enemy : MonoBehaviour
             var MaxDeg = Mathf.Acos(CosDiv3) * Mathf.Rad2Deg;
             var MinDeg = Mathf.Acos(CosDiv2) * Mathf.Rad2Deg;
             var rand = Random.Range(MinDeg, MaxDeg);    //MinDeg～MaxDigの範囲でランダムな角度を獲得
-            var RandRad = rand * Mathf.Deg2Rad; //degをradに変換
             var RandomDir = Quaternion.Euler(0, -rand, 0) * transform.forward;   //ランダムな発射方向
             return RandomDir;
         }
@@ -543,5 +553,25 @@ public class Enemy : MonoBehaviour
         var predictionCharaPoint = TargetPoint + predictionPosXZ;   //移動後の位置を計算
         var direction = (predictionCharaPoint - this.transform.position).normalized;    //発射方向
         return direction;
+    }
+
+    private void RandumRotate() //ランダムな方向を向く
+    {
+        if (SerchTurnFlag)
+        {
+            Rand = Random.Range(-360, 360);
+            Vector = Quaternion.Euler(0, Rand, 0) * transform.forward;
+            Vector.y = 0f;
+            SerchTurnFlag = false;
+        }
+        transform.rotation = Quaternion.Slerp(
+            transform.rotation,
+            Quaternion.LookRotation(Vector),
+            0.5f);
+        if(Vector3.Angle(transform.forward, Vector) <= 5f)
+        {
+            SerchTurnFlag = true;
+        }
+            
     }
 }
