@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
     static public GameManager instance;
     private int EnemyCount;
     public float LimitTime; //ゲームの制限時間
-    [SerializeField] private int SaveInt;    //敵の最大数を常に保存
+    [SerializeField] private int EnemyNum;    //敵の最大数を常に保存
     [SerializeField] private float SaveTime;    //カウントダウンの開始時間を常に保存
     private GameObject Player;
     [SerializeField]
@@ -23,6 +23,9 @@ public class GameManager : MonoBehaviour
     private float minute;
     private float second;
     private bool CountDownFlag;
+    private GameObject[] EnemySpownPos;
+    [SerializeField]
+    private GameObject EnemyPrefab;
     private void Awake()    //シングルトン
     {
         if (instance == null)
@@ -72,14 +75,14 @@ public class GameManager : MonoBehaviour
     public void RetryButton()
     {
         SceneManager.LoadScene("ゲーム画面(仮)");
-        EnemyCount = SaveInt;
+        EnemyCount = EnemyNum;
         starttime = SaveTime;
     }
 
     public void StartButton()
     {
         SceneManager.LoadScene("ゲーム画面(仮)");
-        EnemyCount = SaveInt;
+        EnemyCount = EnemyNum;
         starttime = SaveTime;
     }
 
@@ -104,9 +107,8 @@ public class GameManager : MonoBehaviour
     {
         if(CountDownFlag)
         {
-            Time.timeScale = 0; //ゲーム内の時間を停止
             CountDown.GetComponent<Text>().text = starttime.ToString("0");    //整数で時間を表示
-            starttime -= Time.unscaledDeltaTime;
+            starttime -= Time.deltaTime;
             if (starttime.ToString("0") == "0") //0が表示されると
             {  
                 CountDown.GetComponent<Text>().text = "Start!"; //startを表示
@@ -114,21 +116,16 @@ public class GameManager : MonoBehaviour
                 Time.timeScale = 1; //ゲーム内の時間を再度動かす
                 Player.GetComponent<PlayerController_Test>().enabled = true;
                 Player.GetComponent<CameraMove>().enabled = true;
-                CountDown.GetComponent<Text>().enabled = false; //カウントダウンを非表示にする
+                CountDown.SetActive(false); //カウントダウンを非表示にする
             }
         }
 
             
 
-        if (!Result.activeSelf && !GameOverCanvas.activeSelf)
+        if (!Result.activeSelf && !GameOverCanvas.activeSelf && !CountDown.activeSelf)
         {
             counttime -= Time.deltaTime;
-            minute = (int)counttime / 60;
-            second = (int)counttime % 60;
-            if (second > 10)
-                Timer.GetComponent<Text>().text = minute.ToString() + "分" + second.ToString() + "秒";
-            else
-                Timer.GetComponent<Text>().text = minute.ToString() + "分 " + second.ToString() + "秒";
+            CalcTime();
             if (counttime <= 0) //時間が切れたら
                 GameOverScene();
         }
@@ -137,10 +134,15 @@ public class GameManager : MonoBehaviour
 
     private void Initialize()
     {
-        
+        EnemySpownPos = GameObject.FindGameObjectsWithTag("EnemySpown");    //特定のタグのオブジェクトを格納
+        for(int i = 0; i < EnemyNum; i++)
+        {
+            var Pos = EnemySpownPos[i].transform.position;
+            Destroy(EnemySpownPos[i]);
+            Instantiate(EnemyPrefab, Pos, Quaternion.identity);
+        }
         CountDownFlag = true;
         counttime = LimitTime;
-        SaveInt = EnemyCount;
         MainUI = GameObject.Find("StartUI");
         Timer = GameObject.Find("Timer");
         CountDown = GameObject.Find("StartCountdown");
@@ -152,6 +154,7 @@ public class GameManager : MonoBehaviour
         Player.GetComponent<PlayerController_Test>().enabled = false;
         Player.GetComponent<CameraMove>().enabled = false;
         starttime = SaveTime;
+        CalcTime();
     }
 
     private void EndConduct()
@@ -162,5 +165,17 @@ public class GameManager : MonoBehaviour
         Player.GetComponent<CameraMove>().enabled = false;
         Player.GetComponent<Taion>().enabled = false;
     }
+
+    private void CalcTime()
+    {
+        minute = (int)counttime / 60;
+        second = (int)counttime % 60;
+        if (second > 10)
+            Timer.GetComponent<Text>().text = minute.ToString() + "分" + second.ToString() + "秒";
+        else
+            Timer.GetComponent<Text>().text = minute.ToString() + "分 " + second.ToString() + "秒";
+    }
+
+
 }
 
