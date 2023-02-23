@@ -112,8 +112,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 5
-  okuyuki: 10
-  sitanageRot: 1
+  okuyuki: 20.92
+  sitanageRot: 20
   waittime: 1
   gensoku: 5
   gravity: 1
