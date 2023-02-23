@@ -17,6 +17,7 @@ public class Taion : MonoBehaviour
     private float cx;
     private float plux;
     private float taicp;
+    [SerializeField] private float YukidamaTDamage; //á‹Ê‚ªƒ_ƒ[ƒW‚ğó‚¯‚½‚Æ‚«‚É‚Ç‚êˆÊ‚ÌŠÔ•ªŒ¸‚é‚©
 
     [SerializeField] private Slider TaionBar;
 
@@ -52,8 +53,16 @@ public class Taion : MonoBehaviour
         }
     }
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("EnemyBall"))
+            x -= YukidamaTDamage;
+    }
+
     private void OnTriggerEnter(Collider other)
     {
+        
+
         if (other.CompareTag("Takibi"))
         {
             col = true;

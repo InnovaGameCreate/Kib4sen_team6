@@ -78,12 +78,14 @@ public class PlayerController_Test : MonoBehaviour
         {
             pos = hit.collider.gameObject.transform;   //rayの当たったオブジェクトの座標を取得
             block = hit.collider.gameObject;
-            MapManager.instance.ChangeBlock(block, pos, DOWN);
-            if(Remaining < 10)
+            if(block.CompareTag("Grand"))
             {
-                Remaining++;
-
-                YukidamaUI[Remaining - 1].SetActive(true);
+                MapManager.instance.ChangeBlock(block, pos, DOWN);
+                if (Remaining < 10)
+                {
+                    Remaining++;
+                    YukidamaUI[Remaining - 1].SetActive(true);
+                }
             }
 
             Debug.Log("le");
