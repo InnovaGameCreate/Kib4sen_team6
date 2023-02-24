@@ -20,8 +20,8 @@ public class SnowBall : MonoBehaviour
     }
     private void OnTriggerEnter(Collider collision)
     {
-        if (collision.gameObject.tag == "Player")
-            Debug.Log("hit");
+        //if (collision.gameObject.tag == "Player")
+            //Debug.Log("hit");
         var pos = collision.transform.position + collision.transform.forward;
         Instantiate(particle, pos, Quaternion.identity);
         Destroy(this.gameObject);

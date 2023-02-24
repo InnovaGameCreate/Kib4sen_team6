@@ -70,6 +70,7 @@ public class GameManager : MonoBehaviour
     {
         if(EnemyCount != 0) //敵が死ぬたびに数をマイナス
             EnemyCount--;
+            Debug.Log(EnemyCount);
         if (EnemyCount == 0)    //数が0になるとクリア画面の表示
             ClearScene();
     }
@@ -147,6 +148,7 @@ public class GameManager : MonoBehaviour
             Instantiate(EnemyPrefab, EnemyPos, Quaternion.identity);
         }
         CountDownFlag = true;
+        EnemyCount = EnemyNum;
         counttime = LimitTime;
         MainUI = GameObject.Find("StartUI");
         Timer = GameObject.Find("Timer");
