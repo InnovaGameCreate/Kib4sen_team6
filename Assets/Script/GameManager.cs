@@ -18,6 +18,11 @@ public class GameManager : MonoBehaviour
     private GameObject MainUI;
     private GameObject CountDown;
     private GameObject Timer;
+    private GameObject Tutorial;
+    private GameObject CheckList;
+    private Text TutoText;
+    private Text CheckText;
+    private bool TutorialFlag;
     private float starttime;    //カウントダウンの時間
     private float counttime;    //制限時間
     private float minute;
@@ -27,6 +32,16 @@ public class GameManager : MonoBehaviour
     private GameObject[] EnemySpownPos;
     [SerializeField]
     private GameObject EnemyPrefab;
+
+    private bool StartFlag;
+    private bool MoveFlag;
+    private bool HealFlag;
+    private bool AttackFlag;
+    private bool GetFlag;
+    private bool First;
+    private bool Second;
+    private bool Third;
+    private bool Fourth;
     private void Awake()    //シングルトン
     {
         if (instance == null)
@@ -44,8 +59,17 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        StartFlag = true;
+        MoveFlag = false;
+        HealFlag = false;
+        AttackFlag = false;
+        GetFlag = false;
+        First = true;
+        Second = false;
+        Third = false;
+        Fourth = false;
+        TutorialFlag = true;
         SceneManager.sceneLoaded += OnSceneLoaded;
-        //Debug.Log("aa");
         Initialize();
     }
 
@@ -53,6 +77,12 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         MainUIController();
+        if (TutorialFlag)
+        {
+            FlagManager();
+            if(!Second)
+                Player.GetComponent<Taion>().taion = 100f;
+        }
     }
 
     public void GameOverScene()
@@ -99,6 +129,12 @@ public class GameManager : MonoBehaviour
         {
             Initialize();
         }
+        if (scene.name == "チュートリアル")
+        {
+            TutorialFlag = true;
+            Initialize();
+        }
+
     }
 
     public void EndButton()
@@ -123,9 +159,13 @@ public class GameManager : MonoBehaviour
             {  
                 CountDown.GetComponent<Text>().text = "Start!"; //startを表示
                 CountDownFlag = false;
-                Time.timeScale = 1; //ゲーム内の時間を再度動かす
                 Player.GetComponent<PlayerController_Test>().enabled = true;
                 Player.GetComponent<CameraMove>().enabled = true;
+                if (TutorialFlag)
+                {
+                    Tutorial.SetActive(true);
+                    StartCoroutine(TutorialManager());
+                }
                 CountDown.SetActive(false); //カウントダウンを非表示にする
             }
         }
@@ -169,8 +209,110 @@ public class GameManager : MonoBehaviour
         PlayerAnim.SetBool("Lose", false);
         starttime = SaveTime;
         CalcTime();
+        if (TutorialFlag)
+        {
+            EnemyCount = 1;
+            counttime = 600;
+            Tutorial = GameObject.Find("ExplanationText");
+            TutoText = Tutorial.GetComponent<Text>();
+            CheckList = GameObject.Find("CheckBox");
+            CheckText = CheckList.GetComponent<Text>();
+            Tutorial.SetActive(false);
+        }
     }
 
+    private void FlagManager()
+    {
+        if(Input.GetKeyDown(KeyCode.W)||Input.GetKeyDown(KeyCode.A)|| Input.GetKeyDown(KeyCode.S)|| Input.GetKeyDown(KeyCode.D))
+        {
+            MoveFlag = true;
+        }
+        if(Input.GetMouseButton(0))
+        {
+            AttackFlag = true;
+        }
+        if(Input.GetMouseButton(1) && Third)
+        {
+            GetFlag = true;
+        }
+        if(Player.GetComponent<Taion>().taion >= 100f && Second)
+        {
+            HealFlag = true;
+        }
+
+    }
+
+    IEnumerator TutorialManager()
+    {
+        while (true)
+        {
+            if (StartFlag)
+            {
+                TutoText.text = "SnowBallへようこそ!\n今からチュートリアルを始めるよ!";
+                StartFlag = false;
+            }
+            yield return new WaitForSeconds(2f);
+            if (First && !CountDownFlag)
+            {
+                TutoText.text = "移動はWASD\nジャンプはスペースで行うよ\n左クリックで雪玉を投げて攻撃するよ!\n雪玉が落ちた場所には雪が積もるよ";
+                yield return new WaitForSeconds(2f);
+                CheckText.text = "移動\n攻撃";
+                string str = CheckText.text;
+                if (MoveFlag)
+                {
+                    str = str.Replace("移動", "");
+                    CheckText.text = str;
+                }
+                if (AttackFlag)
+                {
+                    str = str.Replace("攻撃", "");
+                    CheckText.text = str;
+                }
+                if (MoveFlag && AttackFlag)
+                {
+                    First = false;
+                    Second = true;
+                    Player.GetComponent<Taion>().taion = 90f;
+                }
+            }
+            if (Second)
+            {
+                TutoText.text = "体温が減ってきたね\n体温が0になるか時間切れになると\nゲームオーバーだから気を付けてね!\n体温は焚火の近くに行くと回復するよ!";
+                yield return new WaitForSeconds(2f);
+                CheckText.text = "体温を回復しよう";
+                string str2 = CheckText.text;
+                if (HealFlag)
+                {
+                    str2 = str2.Replace("体温を回復しよう", "");
+                    CheckText.text = str2;
+                    Third = true;
+                    Second = false;
+                }
+            }
+            if(Third)
+            {
+                TutoText.text = "次に右クリック長押しで雪玉を集めよう";
+                yield return new WaitForSeconds(2f);
+                CheckText.text = "雪玉を集めよう";
+                string str3 = CheckText.text;
+                if (GetFlag)
+                { 
+                    str3 = str3.Replace("雪玉を集めよう", "");
+                    CheckText.text = str3;
+                    Third = false;
+                    Fourth = true;
+                }
+            }
+            if(Fourth)
+            {
+                TutoText.text = "最後に今まで学んだことを活かして雪だるまを倒してみよう!";
+                yield return new WaitForSeconds(2f);
+                TutoText.text = "";
+                CheckText.text = "雪だるまを倒そう";
+            }
+            yield return new WaitForSeconds(1.0f);
+        }
+    }
     private void EndConduct()
     {
         Cursor.visible = true;
