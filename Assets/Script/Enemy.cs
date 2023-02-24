@@ -15,6 +15,7 @@ public class Enemy : MonoBehaviour
     GameObject childObj;
     public GameObject ballPrefab;
 
+
     [Header("敵のパラメータ")]
     [SerializeField, Range(30, 180)]
     private int SightAngle;   //視野角
@@ -30,7 +31,7 @@ public class Enemy : MonoBehaviour
     private int HP;
     [SerializeField]
     private float distance; //足音が聞こえる範囲
-    private bool isVisible;
+    private bool Visible;
     private float preShotTime;
     private Coroutine shotCoroutine;
     private float TargetDistance;
@@ -55,16 +56,6 @@ public class Enemy : MonoBehaviour
     GameObject ball;
     Rigidbody ballRigidbody;
     private NavMeshAgent agent;
-    public struct AreaInfo
-    {
-        public float Probabillity; //そのエリアの事前確率
-        public float After_Probabillity;
-        public float Count; //そのエリアにきた回数
-
-    }
-
-    private float After_ProbabillitySum; //事後確率の総数
-    AreaInfo[] AreaInfos = new AreaInfo[6]; //各エリアの情報
 
     private Animator characterAnim;
     private AnimatorStateInfo AnimInfo;
@@ -95,12 +86,6 @@ public class Enemy : MonoBehaviour
         TurnFlag = true;
         TargetRigid = Target.GetComponent<Rigidbody>();
         HavingBallNum = 10;
-        for (int i = 0; i < AreaInfos.Length; i++)
-        {
-            AreaInfos[i].Probabillity = 1f / 6f; //事前確率を初期化
-            AreaInfos[i].After_Probabillity = 1f / 6f;
-            AreaInfos[i].Count = 0f;
-        }
         characterAnim = GetComponent<Animator>();
     }
 
@@ -109,16 +94,8 @@ public class Enemy : MonoBehaviour
     {
         stateTime += Time.deltaTime;    //現在のステートになってからの時間を計測
         // 視界判定
-        isVisible = IsVisible();
+        Visible = IsVisible();
         StateManager();
-        if (Input.GetKey(KeyCode.I))
-        {
-            HP = 0;
-            if (HP == 0)
-            {
-                ChangeState(State.Dead);
-            }
-        }
 
     }
     public bool IsVisible() //視界に入っているか判定
@@ -129,70 +106,31 @@ public class Enemy : MonoBehaviour
         var SelfDir = Self.forward; //自身の向き
 
         var TargetDir = TargetPos - SelfPos;    //自分から見た敵の方向
-        var TargetDirnol = TargetDir;
-        TargetDirnol.y = 0f;
         TargetDistance = TargetDir.magnitude;   //ターゲットとの距離
 
         var CosHalf = Mathf.Cos(SightAngle / 2 * Mathf.Deg2Rad);    //cos(θ/2)を計算
-        var InnerProduct = Vector3.Dot(SelfDir, TargetDirnol.normalized);  //内積を計算
-
+        var InnerProduct = Vector3.Dot(SelfDir, TargetDir.normalized);  //内積を計算
 
         CosDiv1 = Mathf.Cos(SightAngle / 6 * Mathf.Deg2Rad);    //cos(θ/6)を計算
         CosDiv2 = Mathf.Cos(2 * SightAngle / 6 * Mathf.Deg2Rad);    //cos(2θ/6)を計算
         CosDiv3 = Mathf.Cos(3 * SightAngle / 6 * Mathf.Deg2Rad);    //cos(3θ/6)を計算
 
-        var diff = TargetPos - SelfPos;
-
-        var axis = Vector3.Cross(transform.forward, diff);  //外積を求める
-
-        var angle = Vector3.Angle(transform.forward, diff) * (axis.y < 0 ? -1 : 1); //ターゲットとの角度を-180～180に変換
+        
 
         //ターゲットがどの位置にいるか毎フレーム確認
-        if (InnerProduct > CosDiv1)
-        {
-            if (angle > 0)
-            {
-                AreaNum = 0;
-            }
-            else
-            {
-                AreaNum = 3;
-            }
-        }
-        if (InnerProduct < CosDiv1 && InnerProduct > CosDiv2)
-        {
-            if (angle > 0)
-            {
-                AreaNum = 1;
-            }
-            else
-            {
-                AreaNum = 4;
-            }
-        }
-        if (InnerProduct < CosDiv2 && InnerProduct > CosDiv3)
-        {
-            if (angle > 0)
-            {
-                AreaNum = 2;
-            }
-            else
-            {
-                AreaNum = 5;
-            }
 
-        }
 
-        Debug.Log("CosHalf" + CosHalf);
-        Debug.Log("InnerProduct" + InnerProduct);
+        
         NearFlag = TargetDistance <= distance;
-        var visiable = InnerProduct > CosHalf && TargetDistance < MaxDistance;  //角度判定かつ距離判定
-        if (visiable)
-            visiable = JudgWall(TargetDir, TargetDistance);
+        var visible = InnerProduct > CosHalf && TargetDistance < MaxDistance;  //角度判定かつ距離判定
+        if (visible)
+        {
+            JudgWall(TargetDir, TargetDistance);
+        }
         if(NearFlag)
-            NearFlag = JudgWall(TargetDir, TargetDistance);
+            JudgWall(TargetDir, TargetDistance);
 
-        return visiable;
+        return visible;
     }
 
     private void TurnToTarget(float t)    //ターゲットの方を向く
@@ -224,7 +162,7 @@ public class Enemy : MonoBehaviour
                     StopHere();
                 */
                 LookTargetDirection();
-                if (isVisible)
+                if (Visible)
                 {
                     ChangeState(State.Attack);
                     return;
@@ -255,8 +193,9 @@ public class Enemy : MonoBehaviour
                 if (TurnFlag)
                     LookTargetDirection(); //ターゲットの方を向く
 
-                if(!isVisible)  //見失うと探索へ戻る
+                if(!Visible)  //見失うと探索へ戻る
                 {
+                    Debug.Log("Qq");
                     ChangeState(State.Serch);
                 }
                 
@@ -302,40 +241,10 @@ public class Enemy : MonoBehaviour
             stateEnter = false;
     }
 
-    /*private IEnumerator BallShot()
-    {
-        while (true)
-        {
-            if (isVisible)
-            {
-                //characterAnim.SetBool("ShotFlag",true);   //投げるときは向きを固定
-                TurnFlag = false;
-                GameObject ball = (GameObject)Instantiate(ballPrefab, childObj.transform.position, Quaternion.identity);
-                Rigidbody ballRigidbody = ball.GetComponent<Rigidbody>();
-                yield return new WaitForSeconds(0.3f);    //射撃準備で0.3秒停止
-                ShotDir = RandomAngle(Bayesian()); //ベイズ推定
-                //ShotDir = RandomAngle();
-                ballRigidbody.AddForce(ShotDir.normalized * speed, ForceMode.Impulse);
-                AreaInfos[AreaNum].Count++;   //投げる瞬間のターゲットの位置を保存
-                //characterAnim.SetBool("ShotFlag", false);
-                TurnFlag = true;
-                HavingBallNum--;    //持っている雪玉の数を1減らす
-                var rnd = Random.Range(1, 11);　// ※ 1～10の範囲でランダムな整数値が返る
-                if (rnd == 1 || rnd == 2)    //ランダムな確率で弾を発射しない状態に移行
-                {
-                    //ChangeState(State.doNothing);
-                    //yield break;
-                }
-            }
-            yield return new WaitForSeconds(0.5f);    //0.5秒待機
-        }
-    }*/
     private void BallShot()
     {
-            if (isVisible)
+            if (Visible)
             {
-                var CosDiv = CosDiv1 = Mathf.Cos(SightAngle / 12 * Mathf.Deg2Rad);    //cos(θ/6)を計算
-                var InnerProduct = Vector3.Dot(Self.forward, (Target.position - Self.position).normalized);  //内積を計算
                 if (IntFlag)    //アニメーションを起動する一回だけ起動
                 {
                     characterAnim.Play("Snowman_double_Throw");
@@ -347,14 +256,14 @@ public class Enemy : MonoBehaviour
                 }
                 AnimInfo = characterAnim.GetCurrentAnimatorStateInfo(0);
                 if (!OnceFlag)
-                { 
+                {
                     if (AnimInfo.normalizedTime >= 0.7f && AnimInfo.IsName("Snowman_double_Throw"))    //アニメーションが7割再生されたら射撃
                     {
                         ShotFlag = true;
                         OnceFlag = true;
                     }
                 }
-                if(AnimInfo.normalizedTime >= 1f && AnimInfo.IsName("Snowman_double_Throw"))   //終了したら
+                if (AnimInfo.normalizedTime >= 1f && AnimInfo.IsName("Snowman_double_Throw"))   //終了したら
                 {
                     characterAnim.Play("Snowman_double_Idle");
                     TurnFlag = true;    //向きの固定解除
@@ -362,139 +271,28 @@ public class Enemy : MonoBehaviour
                     IntFlag = true;
                     OnceFlag = false;
                 }
-                    
+
                 if (ShotFlag)
                 {
-                //ShotDir = RandomAngle(Bayesian()); //ベイズ推定
+                    //ShotDir = RandomAngle(Bayesian()); //ベイズ推定
                     ShotDir = AccuracyController(PredictShot());
                     ball.transform.parent = null;
                     ballRigidbody.AddForce(ShotDir.normalized * speed, ForceMode.Impulse);
                     ball.GetComponent<SphereCollider>().enabled = true;
-                    AreaInfos[AreaNum].Count++;   //投げる瞬間のターゲットの位置を保存
                     HavingBallNum--;    //持っている雪玉の数を1減らす
-                /*var rnd = Random.Range(1, 11);　// ※ 1～10の範囲でランダムな整数値が返る
-                if (rnd == 1 || rnd == 2)    //ランダムな確率で弾を発射しない状態に移行
-                {
-                    //ChangeState(State.doNothing);
-                    //yield break;
-                }*/
+                    /*var rnd = Random.Range(1, 11);　// ※ 1～10の範囲でランダムな整数値が返る
+                    if (rnd == 1 || rnd == 2)    //ランダムな確率で弾を発射しない状態に移行
+                    {
+                        //ChangeState(State.doNothing);
+                        //yield break;
+                    }*/
                     ShotFlag = false;
                 }
                 preShotTime = stateTime;
             }
     }
 
-    private Vector3 RandomAngle(int Area)  //視界内でランダムにボールを投げる
-    {
-        Debug.Log(Area);
-        if (Area == 0)
-        {
-            var Deg = Mathf.Acos(CosDiv1) * Mathf.Rad2Deg;
-            var rand = Random.Range(0, Deg);    //0～θ/6の範囲でランダムな角度を獲得
-            var RandomDir = Quaternion.Euler(0, rand, 0) * transform.forward;   //ランダムな発射方向
-            return RandomDir;
-        }
-        if (Area == 1)
-        {
-            var MaxDeg = Mathf.Acos(CosDiv2) * Mathf.Rad2Deg;
-            var MinDeg = Mathf.Acos(CosDiv1) * Mathf.Rad2Deg;
-            var rand = Random.Range(MinDeg, MaxDeg);    //MinDeg～MaxDigの範囲でランダムな角度を獲得
-            var RandomDir = Quaternion.Euler(0, rand, 0) * transform.forward;   //ランダムな発射方向
-            return RandomDir;
-        }
-        if (Area == 2)
-        {
-            var MaxDeg = Mathf.Acos(CosDiv3) * Mathf.Rad2Deg;
-            var MinDeg = Mathf.Acos(CosDiv2) * Mathf.Rad2Deg;
-            var rand = Random.Range(MinDeg, MaxDeg);    //MinDeg～MaxDigの範囲でランダムな角度を獲得
-            //var RandomDir = transform.forward + new Vector3(Mathf.Sin(RandRad), 0, Mathf.Cos(RandRad));   //ランダムな発射方向
-            var RandomDir = Quaternion.Euler(0, rand, 0) * transform.forward;   //ランダムな発射方向
-            return RandomDir;
-        }
-        if (Area == 3)
-        {
-            var Deg = Mathf.Acos(CosDiv1) * Mathf.Rad2Deg;
-            var rand = Random.Range(-Deg, 0);    //-θ/6～0の範囲でランダムな角度を獲得
-            var RandomDir = Quaternion.Euler(0, rand, 0) * transform.forward;   //ランダムな発射方向
-            return RandomDir;
-        }
-        if (Area == 4)
-        {
-            var MaxDeg = Mathf.Acos(CosDiv2) * Mathf.Rad2Deg;
-            var MinDeg = Mathf.Acos(CosDiv1) * Mathf.Rad2Deg;
-            var rand = Random.Range(MinDeg, MaxDeg);    //MinDeg～MaxDigの範囲でランダムな角度を獲得
-            var RandomDir = Quaternion.Euler(0, -rand, 0) * transform.forward;   //ランダムな発射方向
-            return RandomDir;
-        }
-        if (Area == 5)
-        {
-            var MaxDeg = Mathf.Acos(CosDiv3) * Mathf.Rad2Deg;
-            var MinDeg = Mathf.Acos(CosDiv2) * Mathf.Rad2Deg;
-            var rand = Random.Range(MinDeg, MaxDeg);    //MinDeg～MaxDigの範囲でランダムな角度を獲得
-            var RandomDir = Quaternion.Euler(0, -rand, 0) * transform.forward;   //ランダムな発射方向
-            return RandomDir;
-        }
-
-        return transform.forward;
-
-    }
-
-    private int Bayesian() //ベイズ推定
-    {
-        float CountSum = 0;
-        for(int i = 0; i < AreaInfos.Length; i++)
-        {
-            CountSum += AreaInfos[i].Count;
-        }
-        if (CountSum != 0)
-        {
-            for (int i = 0; i < AreaInfos.Length; i++)
-            {
-                var likelihood = AreaInfos[i].Count / CountSum; //尤度を求める
-                AreaInfos[i].After_Probabillity = AreaInfos[i].Probabillity * likelihood; //事後確率を求める
-                After_ProbabillitySum += AreaInfos[i].After_Probabillity;  //事後確率の総和を求める
-            }
-            for (int i = 0; i < AreaInfos.Length; i++)
-            {
-                AreaInfos[i].After_Probabillity = AreaInfos[i].After_Probabillity / After_ProbabillitySum;   //各事後確率の正規化
-                if (AreaInfos[i].After_Probabillity >= 0.5f) //確率分布が収束していたら
-                {
-
-                    ShotArea = i;   //常に確率が最も高いエリアを格納
-                    After_ProbabillitySum = 0;
-                    return ShotArea;
-                }
-
-            }
-            float rand = float.MaxValue;   //0.0~1.0を取得
-            for (int i = 0; i < AreaInfos.Length; i++)
-            {
-                Temp_prob += AreaInfos[i].After_Probabillity;   //各エリアの確率を順番に足す
-                if (Temp_prob >= rand) //和がrandを超えた時点でのエリアを返す
-                {
-                    ShotArea = i;
-                    break;
-                }
-            }
-            //初期化
-            After_ProbabillitySum = 0;
-            Temp_prob = 0;
-        }   
-        else  //データがない時
-        {
-            float rand = float.MaxValue;   //0.0~1.0を取得
-            for (int i = 0; i < AreaInfos.Length; i++)
-            {
-                Temp_prob += AreaInfos[i].Probabillity;   //各エリアの確率を順番に足す
-                if (Temp_prob >= rand) //和がrandを超えた時点でのエリアを返す
-                {
-                    ShotArea = i;
-                    break;
-                }
-            }
-        }
-        return ShotArea;   //確率が最も高いエリアを返す
-    }
+    
 
 
      private void SetFlag()
@@ -505,56 +303,12 @@ public class Enemy : MonoBehaviour
         OnceFlag = false;
     }
 
-    /*
-    private IEnumerator CalcArriveTime()    //移動予測地点のエリアを取得
-    {
-        var Distance = Vector3.Distance(Self.position, Target.position);   //ターゲットとの距離を計算
-        var ArrivalTime = Distance / speed; //到着までの時間を計算
-        yield return new WaitForSeconds(ArrivalTime);   //到着するまで待機
-        AreaInfos[AreaNum].Count++;   //その時点でのエリアを記憶
-    }*/
-
-    /*
-    private void GotoNextPoint()
-    {
-        //NavMeshAgentのストップを解除
-        agent.isStopped = false;
-
-        //ランダムな地点を取得
-        float posX = Random.Range(1, 20);
-        float posY = Random.Range(1, 20);
-
-        Vector3 direction = new Vector3(posX, this.transform.position.y, posY);
-
-        Quaternion rotation =
-            Quaternion.LookRotation(direction - transform.position, Vector3.up);
-        //このオブジェクトの向きを替える
-        transform.rotation = rotation;
-
-        agent.destination = direction;
-        WalkFlag = false;
-    }
-
-    private void StopHere()
-    {
-        agent.isStopped = true;
-        time += Time.deltaTime;
-
-        if (time > waitTime)
-        {
-            GotoNextPoint();
-            time = 0;
-
-        }
-    }
-    */
 
     void OnTriggerEnter(Collider collision)
     {
         if(collision.gameObject.tag == "SnowBall")
         {
             HP--;
-            Debug.Log(HP);
             if(HP == 0)
             {
                 ChangeState(State.Dead);
@@ -565,7 +319,8 @@ public class Enemy : MonoBehaviour
     private Vector3 PredictShot()
     {
         var TargetPoint = Target.transform.position;    //対象の位置
-        TargetPoint.y += 0.5f;
+        float rndpos = Random.Range(0.5f, 1.7f);   
+        TargetPoint.y += rndpos;
         var arrivalTime = Vector3.Distance(TargetPoint, ball.transform.position) / speed;   //対象に到達するまでの時間
         var TargetVelocity = new Vector3(TargetRigid.velocity.x, 0, TargetRigid.velocity.z);   //横方向への移動速度
         var predictionPosXZ = TargetVelocity * arrivalTime; //移動距離を計算
@@ -574,62 +329,45 @@ public class Enemy : MonoBehaviour
         return direction;
     }
 
-    private void RandumRotate() //ランダムな方向を向く
-    {
-        if (SerchTurnFlag)
-        {
-            Rand = Random.Range(-360, 360);
-            Vector = Quaternion.Euler(0, Rand, 0) * transform.forward;
-            Vector.y = 0f;
-            SerchTurnFlag = false;
-        }
-        transform.rotation = Quaternion.Slerp(
-            transform.rotation,
-            Quaternion.LookRotation(Vector),
-            0.5f);
-        if(Vector3.Angle(transform.forward, Vector) <= 5f)
-        {
-            SerchTurnFlag = true;
-        }
-            
-    }
-
     private void LookTargetDirection()
     {
-        if (!isVisible && NearFlag)  //視界には入っていないが音が聞こえるぐらい近い時
+        if (!Visible && NearFlag)  //視界には入っていないが音が聞こえるぐらい近い時
             TurnToTarget(0.03f);
-        else if (isVisible) //視界に入っているとき
+        else if (Visible) //視界に入っているとき
             TurnToTarget(0.5f);
     }
 
-    private bool JudgWall(Vector3 Direction, float Distance) //壁があるか判定
+    private void JudgWall(Vector3 Direction, float Distance) //壁があるか判定
     {
         Ray ray;
         RaycastHit hit;
+        var pos = Self.position;
+        pos.y = 1.5f;
+        ray = new Ray(pos, Direction);  //プレイヤーの方向にRayをとばす
 
-        ray = new Ray(this.transform.position, Direction);  //プレイヤーの方向にRayをとばす
-        
         if(Physics.Raycast(ray.origin, ray.direction * Distance, out hit))
         {
+            Debug.Log(hit.collider.gameObject.layer);
             if(hit.collider.CompareTag("Player"))
             {
                 //Debug.Log("見える");
-                return true;
+                Visible = true;
             }
             else
             {
                 //Debug.Log("みえない");
-                return false;
+                Visible = false;
+                NearFlag = false;
             }
+               
         }
-        return false;
         
     }
 
     private Vector3 AccuracyController(Vector3 Dir)   //命中精度設定
     {
         float rnd = Random.Range(0f, 1f);　// ※ 1～10の範囲でランダムな整数値が返る
-        if(rnd >= 0.2f)
+        if(rnd >= 0.4f)
         {
             Vector3 RandomDir;
             var pm = Random.Range(0, 2);
