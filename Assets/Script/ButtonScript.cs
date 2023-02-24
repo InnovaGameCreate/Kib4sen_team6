@@ -37,4 +37,9 @@ public class ButtonScript : MonoBehaviour
     {
         GameManager.instance.TutorialButton();
     }
+
+    public void ReturnTitle()
+    {
+
+    }
 }

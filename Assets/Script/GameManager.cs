@@ -80,13 +80,12 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Debug.Log(TitleFlag);
         if(!TitleFlag)
             MainUIController();
         if (TutorialFlag)
         {
             FlagManager();
-            if(DownFlag)
-                Player.GetComponent<Taion>().taion = 100f;
         }
     }
 
@@ -99,10 +98,14 @@ public class GameManager : MonoBehaviour
 
     public void ClearScene()
     {
-         
         PlayerAnim.Play("Win");
         EndConduct();
         Result.SetActive(true);
+    }
+
+    public void ReturnTitle()
+    {
+        SceneManager.LoadScene("スタート画面");
     }
 
     public void EnemyDeath()
@@ -123,7 +126,6 @@ public class GameManager : MonoBehaviour
 
     public void StartButton()
     {
-        Debug.Log("s");
         SceneManager.LoadScene("ゲーム画面(仮)");
         EnemyCount = EnemyNum;
         starttime = SaveTime;
@@ -200,7 +202,7 @@ public class GameManager : MonoBehaviour
     private void Initialize()
     {
         EnemySpownPos = GameObject.FindGameObjectsWithTag("EnemySpown");    //特定のタグのオブジェクトを格納
-        for (int i = 0; i < EnemyNum; i++)
+        for (int i = 0; i < EnemySpownPos.Length; i++)
         {
             var EnemyPos = EnemySpownPos[i].transform.position;
             Destroy(EnemySpownPos[i]);
@@ -250,7 +252,7 @@ public class GameManager : MonoBehaviour
         {
             GetFlag = true;
         }
-        if(Player.GetComponent<Taion>().taion >= 100f && Second)
+        if(Second)
         {
             HealFlag = true;
         }
@@ -288,7 +290,6 @@ public class GameManager : MonoBehaviour
                 {
                     First = false;
                     Second = true;
-                    Player.GetComponent<Taion>().taion = 80f;
                     StartFlag = true;
                 }
             }
@@ -339,9 +340,16 @@ public class GameManager : MonoBehaviour
             }
             if(Fourth)
             {
-                TutoText.text = "最後に今まで学んだことを活かして雪だるまを倒してみよう!";
-                yield return new WaitForSeconds(2f);
-                CheckText.text = "雪だるまを倒そう";
+                if (StartFlag)
+                {
+                    TutoText.text = "最後に今まで学んだことを活かして雪だるまを倒してみよう!";
+                    CheckText.text = "雪だるまを倒そう";
+                    yield return new WaitForSeconds(2f);
+                    TutoText.text = "";
+                    StartFlag = false;
+                }
+                
+
             }
             yield return new WaitForSeconds(1.0f);
         }
