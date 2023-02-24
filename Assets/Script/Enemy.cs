@@ -26,8 +26,6 @@ public class Enemy : MonoBehaviour
     [SerializeField]
     private float ReloadTime;
     [SerializeField]
-    private float waitTime;
-    [SerializeField]
     private int HP;
     [SerializeField]
     private float distance; //‘«‰¹‚ª•·‚±‚¦‚é”ÍˆÍ
@@ -77,7 +75,6 @@ public class Enemy : MonoBehaviour
     private void Start()
     {
         Target = GameObject.Find("Player").transform;
-        HP = 10;
         agent = GetComponent<NavMeshAgent>();
         agent.autoBraking = false;  //–Ú“I’n‚É‹ß‚Ã‚­‚Æ‚«‚É‘¬“x‚ª—Ž‚¿‚È‚¢‚æ‚¤‚É‚·‚é
         agent.updateRotation = false;   //‰ñ“]‚µ‚È‚¢‚æ‚¤‚É‚·‚é

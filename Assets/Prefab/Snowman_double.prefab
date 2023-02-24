@@ -240,15 +240,11 @@ MonoBehaviour:
   Target: {fileID: 0}
   childObj: {fileID: 1591463347919379175}
   ballPrefab: {fileID: 904010653442625431, guid: fa660ee09a85af54495a4fd88859c277, type: 3}
-  layerMask:
-    serializedVersion: 2
-    m_Bits: 256
   SightAngle: 120
   MaxDistance: 40
   speed: 30
   ReloadTime: 3
-  waitTime: 2
-  HP: 0
+  HP: 10
   distance: 10
 --- !u!195 &1591463348062831937
 NavMeshAgent:
@@ -281,7 +277,7 @@ SphereCollider:
   m_GameObject: {fileID: 1934131845329650880}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.45
   m_Center: {x: 0, y: 1.54, z: 0}
