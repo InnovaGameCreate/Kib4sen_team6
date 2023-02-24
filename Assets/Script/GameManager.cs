@@ -23,6 +23,7 @@ public class GameManager : MonoBehaviour
     private float minute;
     private float second;
     private bool CountDownFlag;
+    private Animator PlayerAnim;
     private GameObject[] EnemySpownPos;
     [SerializeField]
     private GameObject EnemyPrefab;
@@ -56,13 +57,15 @@ public class GameManager : MonoBehaviour
 
     public void GameOverScene()
     {
+        PlayerAnim.Play("Lose");
         EndConduct();
         GameOverCanvas.SetActive(true);
     }
 
     public void ClearScene()
     {
-
+         
+        PlayerAnim.Play("Win");
         EndConduct();
         Result.SetActive(true);
     }
@@ -161,6 +164,9 @@ public class GameManager : MonoBehaviour
         GameOverCanvas.SetActive(false);
         Player.GetComponent<PlayerController_Test>().enabled = false;
         Player.GetComponent<CameraMove>().enabled = false;
+        PlayerAnim = Player.GetComponent<Animator>();
+        PlayerAnim.SetBool("Win", false);
+        PlayerAnim.SetBool("Lose", false);
         starttime = SaveTime;
         CalcTime();
     }

@@ -43,6 +43,7 @@ public class Enemy : MonoBehaviour
     float CosDiv2;
     float CosDiv3;
     float Temp_prob;
+    bool DamageFlag;
     bool IntFlag;
     bool ShotFlag;
     bool OnceFlag;
@@ -81,6 +82,7 @@ public class Enemy : MonoBehaviour
         OnceFlag = false;
         IntFlag = true;
         TurnFlag = true;
+        DamageFlag = false;
         TargetRigid = Target.GetComponent<Rigidbody>();
         HavingBallNum = 10;
         characterAnim = GetComponent<Animator>();
@@ -263,10 +265,7 @@ public class Enemy : MonoBehaviour
                 if (AnimInfo.normalizedTime >= 1f && AnimInfo.IsName("Snowman_double_Throw"))   //終了したら
                 {
                     characterAnim.Play("Snowman_double_Idle");
-                    TurnFlag = true;    //向きの固定解除
-                    ShotFlag = false;
-                    IntFlag = true;
-                    OnceFlag = false;
+                    SetFlag();
                 }
 
                 if (ShotFlag)
@@ -298,6 +297,7 @@ public class Enemy : MonoBehaviour
         ShotFlag = false;
         IntFlag = true;
         OnceFlag = false;
+        DamageFlag = false;
     }
 
 
@@ -306,6 +306,8 @@ public class Enemy : MonoBehaviour
         if(collision.gameObject.tag == "SnowBall")
         {
             HP--;
+            if (!Visible)   //視界に入っていなければ
+                DamageFlag = true;
             if(HP == 0)
             {
                 ChangeState(State.Dead);
@@ -332,6 +334,8 @@ public class Enemy : MonoBehaviour
             TurnToTarget(0.03f);
         else if (Visible) //視界に入っているとき
             TurnToTarget(0.5f);
+        else if (DamageFlag)    //ダメージを受けたとき
+            TurnToTarget(0.1f);
     }
 
     private void JudgWall(Vector3 Direction, float Distance) //壁があるか判定
