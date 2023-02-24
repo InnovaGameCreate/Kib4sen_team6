@@ -333,8 +333,10 @@ public class Enemy : MonoBehaviour
     {
             if (isVisible)
             {
-                if (IntFlag)    //アニメーションを起動する一回だけ起動
-                { 
+                var CosDiv = CosDiv1 = Mathf.Cos(SightAngle / 12 * Mathf.Deg2Rad);    //cos(θ/6)を計算
+                var InnerProduct = Vector3.Dot(Self.forward, (Target.position - Self.position).normalized);  //内積を計算
+                if (IntFlag && InnerProduct > CosDiv)    //アニメーションを起動する一回だけ起動
+                {
                     characterAnim.Play("Snowman_double_Throw");
                     TurnFlag = false;   //投げるときは向きを固定
                     ball = (GameObject)Instantiate(ballPrefab, childObj.transform.position, Quaternion.identity);
@@ -343,11 +345,13 @@ public class Enemy : MonoBehaviour
                     IntFlag = false;
                 }
                 AnimInfo = characterAnim.GetCurrentAnimatorStateInfo(0);
-            if (!OnceFlag)
-                if (AnimInfo.normalizedTime >= 0.7f && AnimInfo.IsName("Snowman_double_Throw"))    //アニメーションが7割再生されたら射撃
-                {
-                    ShotFlag = true;
-                    OnceFlag = true;
+                if (!OnceFlag)
+                { 
+                    if (AnimInfo.normalizedTime >= 0.7f && AnimInfo.IsName("Snowman_double_Throw"))    //アニメーションが7割再生されたら射撃
+                    {
+                        ShotFlag = true;
+                        OnceFlag = true;
+                    }
                 }
                 if(AnimInfo.normalizedTime >= 1f && AnimInfo.IsName("Snowman_double_Throw"))   //終了したら
                 {
@@ -361,11 +365,11 @@ public class Enemy : MonoBehaviour
                 if (ShotFlag)
                 {
                 //ShotDir = RandomAngle(Bayesian()); //ベイズ推定
-                ShotDir = PredictShot();
+                    ShotDir = PredictShot();
                     ball.transform.parent = null;
                     ballRigidbody.AddForce(ShotDir.normalized * speed, ForceMode.Impulse);
+                    ball.GetComponent<SphereCollider>().enabled = true;
                     AreaInfos[AreaNum].Count++;   //投げる瞬間のターゲットの位置を保存
-                    
                     HavingBallNum--;    //持っている雪玉の数を1減らす
                 /*var rnd = Random.Range(1, 11);　// ※ 1～10の範囲でランダムな整数値が返る
                 if (rnd == 1 || rnd == 2)    //ランダムな確率で弾を発射しない状態に移行
@@ -499,13 +503,15 @@ public class Enemy : MonoBehaviour
         IntFlag = true;
         OnceFlag = false;
     }
+
+    /*
     private IEnumerator CalcArriveTime()    //移動予測地点のエリアを取得
     {
         var Distance = Vector3.Distance(Self.position, Target.position);   //ターゲットとの距離を計算
         var ArrivalTime = Distance / speed; //到着までの時間を計算
         yield return new WaitForSeconds(ArrivalTime);   //到着するまで待機
         AreaInfos[AreaNum].Count++;   //その時点でのエリアを記憶
-    }
+    }*/
 
     /*
     private void GotoNextPoint()
@@ -557,11 +563,12 @@ public class Enemy : MonoBehaviour
     private Vector3 PredictShot()
     {
         var TargetPoint = Target.transform.position;    //対象の位置
+        TargetPoint.y += 0.5f;
         var arrivalTime = Vector3.Distance(TargetPoint, ball.transform.position) / speed;   //対象に到達するまでの時間
         var TargetVelocity = new Vector3(TargetRigid.velocity.x, 0, TargetRigid.velocity.z);   //横方向への移動速度
         var predictionPosXZ = TargetVelocity * arrivalTime; //移動距離を計算
         var predictionCharaPoint = TargetPoint + predictionPosXZ;   //移動後の位置を計算
-        var direction = (predictionCharaPoint - this.transform.position).normalized;    //発射方向
+        var direction = (predictionCharaPoint - ball.transform.position).normalized;    //発射方向
         return direction;
     }
 
@@ -615,5 +622,10 @@ public class Enemy : MonoBehaviour
         }
         return false;
         
+    }
+
+    private void AccuracyController()
+    {
+
     }
 }
