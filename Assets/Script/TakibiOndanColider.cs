@@ -16,7 +16,7 @@ public class TakibiOndanColider : MonoBehaviour
         
     }
 
-    void OnTriggerStay(Collider other)
+    void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "Grand")
            MapManager.instance.TakibiAroundChange(other.gameObject, other.gameObject.transform);

@@ -84,14 +84,17 @@ public class Ballkidou : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        effinst = Instantiate(particle);
-        effinst.transform.position = this.transform.position;
-        effinst.Play();
-        Destroy(effinst.gameObject, 3.0f);
-        if (other.gameObject.tag == "Grand") //SnowBallと同一のもの
+        if (other.gameObject.tag != "Takibi")
         {
-            MapManager.instance.ChangeBlock(other.gameObject, other.gameObject.transform, UP);  //ブロックの設置
+            effinst = Instantiate(particle);
+            effinst.transform.position = this.transform.position;
+            effinst.Play();
+            Destroy(effinst.gameObject, 3.0f);
+            if (other.gameObject.tag == "Grand") //SnowBallと同一のもの
+            {
+                MapManager.instance.ChangeBlock(other.gameObject, other.gameObject.transform, UP);  //ブロックの設置
+            }
+            Destroy(this.gameObject);
         }
-        Destroy(this.gameObject);
     }
 }
