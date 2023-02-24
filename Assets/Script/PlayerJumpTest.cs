@@ -12,7 +12,7 @@ public class PlayerJumpTest : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        UpForce = 200;
+        UpForce = 300;
         Distance = 0.3f;
         animator = GetComponent<Animator>();
     }
@@ -27,15 +27,12 @@ public class PlayerJumpTest : MonoBehaviour
         Debug.DrawRay(rayPosition, Vector3.down * Distance, Color.red);
 
         
-        if (Input.GetKeyDown("space"))
+        if (Input.GetKeyDown("space") && isGround && (animator.GetCurrentAnimatorStateInfo(0).IsName("Standing@loop") || animator.GetCurrentAnimatorStateInfo(0).IsName("Running@loop")))
         {
-            if (isGround && (animator.GetCurrentAnimatorStateInfo(0).IsName("Standing@loop") || animator.GetCurrentAnimatorStateInfo(0).IsName("Running@loop")))
-            {
-                rb.AddForce(new Vector3(0, UpForce, 0));
-                animator.SetBool("Jump", true);
-            }
+            rb.AddForce(new Vector3(0, UpForce, 0));
+            animator.SetBool("Jump", true);
         }
-        if (!isGround)
+        if (!isGround || !Input.GetKeyDown("space"))
         {
             animator.SetBool("Jump", false);
         }
