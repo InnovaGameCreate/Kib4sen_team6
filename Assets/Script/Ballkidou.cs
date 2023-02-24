@@ -31,7 +31,9 @@ public class Ballkidou : MonoBehaviour
         x = qua.eulerAngles.x * 3.14f / 180;
         if (Camera.main.transform.rotation.x > 0)
         {
-            tyusinkyori = Camera.main.transform.position.y / Mathf.Sin(x);
+            //tyusinkyori = Camera.main.transform.position.y / Mathf.Sin(x);
+
+            tyusinkyori = okuyuki;
         }
         else
         {
@@ -44,8 +46,7 @@ public class Ballkidou : MonoBehaviour
         force = kidou.direction * speed;
         if (0 < Camera.main.transform.rotation.x && Camera.main.transform.rotation.x < sitanageRot*Mathf.PI / 180f)
         {
-            force.y = 0;
-            Debug.Log("a");
+            //force.y = 0;
         }
     }
 
