@@ -32,4 +32,9 @@ public class ButtonScript : MonoBehaviour
     {
         GameManager.instance.StartButton();
     }
+
+    public void Tutorial()
+    {
+        GameManager.instance.TutorialButton();
+    }
 }
