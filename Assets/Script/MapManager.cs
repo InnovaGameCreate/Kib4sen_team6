@@ -29,6 +29,7 @@ public class MapManager : MonoBehaviour
     private GameObject[] U_DBlockPrefab;  //下
     private MapInfo[,] mapinfos;
     private Vector3 Temp_Pos;
+    [SerializeField] private GameObject TakibiNearPrefab;
     public struct MapInfo
     {
         public float y;   //y軸方向の情報
@@ -76,16 +77,17 @@ public class MapManager : MonoBehaviour
         Temp_Pos = blockPos.position;
         Temp_Pos.y = -0.49f;///
         Destroy(block);
-        GameObject takibiground = D_CBlockPrefab[4];
-        takibiground.tag = "Untagged";
-        Instantiate(D_CBlockPrefab[4], Temp_Pos, Quaternion.identity);
+        Instantiate(TakibiNearPrefab, Temp_Pos, Quaternion.identity);
+    }
+
+    public int TakibiFarAroundChange(Transform blockPos)
+    {
+        return mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowCount;
     }
         
 
     public void ChangeBlock(GameObject block, Transform blockPos, int Check)
     {
-        if (block != D_CBlockPrefab[4])
-        {
 
             ChangeSnowState(block, blockPos, Check);
 
@@ -137,13 +139,18 @@ public class MapManager : MonoBehaviour
                 UpFlag = false;
                 Instantiate(U_CBlockPrefab[2], Temp_Pos, Quaternion.identity);
             }
-        }
+
+            if (Check == 2)
+                mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowCount = -5;
+
     }
 
     private void ChangeSnowState(GameObject block, Transform blockPos, int Check)  //雪玉が当たるたびに状態を変更
     {
-        if(Check == 1 && mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowCount <= 10)
+        if (Check == 1 && mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowCount <= 10)
             mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowCount++;   //雪玉が当たるたびにプラス
+        else if (Check == 2)
+            mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowCount = -7;
         else
             mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowCount--;   //右クリックのたびにマイナス
 
