@@ -17,7 +17,9 @@ public class PlayerController_Test : MonoBehaviour
     private bool isGathering = false;
     GameObject Bullet;
 
-    [SerializeField] private GameObject[] YukidamaUI = new GameObject[10];
+    [SerializeField] private GameObject[] YukidamaUI;
+    [SerializeField] private float YukidamaDeleteTime; //焚火に接触したときに手持ち雪玉が減少していく時間の間隔
+    private float ytime;
 
     // Start is called before the first frame update
     void Start()
@@ -111,6 +113,37 @@ public class PlayerController_Test : MonoBehaviour
     private void ThrowStop()
     {
         animator.SetBool("Throw", false);
+    }
+
+    private void YukidamaDecrease()
+    {
+        if (Remaining > 0)
+        {
+            YukidamaUI[Remaining - 1].SetActive(false);
+            Remaining--;
+        }
+    }
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.CompareTag("Takibi"))
+        {
+            ytime += Time.deltaTime;
+            if (ytime >= YukidamaDeleteTime)
+            {
+                ytime = 0;
+                YukidamaDecrease();
+
+            }
+
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Takibi"))
+        {
+            ytime = 0;
+        }
     }
 
 }
