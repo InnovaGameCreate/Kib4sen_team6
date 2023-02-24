@@ -33,6 +33,9 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private GameObject EnemyPrefab;
 
+    private bool TitleFlag = true;
+
+    private bool DownFlag;
     private bool StartFlag;
     private bool MoveFlag;
     private bool HealFlag;
@@ -60,6 +63,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         StartFlag = true;
+        DownFlag = false;
         MoveFlag = false;
         HealFlag = false;
         AttackFlag = false;
@@ -68,19 +72,20 @@ public class GameManager : MonoBehaviour
         Second = false;
         Third = false;
         Fourth = false;
-        TutorialFlag = true;
+        //TutorialFlag = true;
         SceneManager.sceneLoaded += OnSceneLoaded;
-        Initialize();
+        //Initialize();
     }
 
     // Update is called once per frame
     void Update()
     {
-        MainUIController();
+        if(!TitleFlag)
+            MainUIController();
         if (TutorialFlag)
         {
             FlagManager();
-            if(!Second)
+            if(DownFlag)
                 Player.GetComponent<Taion>().taion = 100f;
         }
     }
@@ -118,6 +123,7 @@ public class GameManager : MonoBehaviour
 
     public void StartButton()
     {
+        Debug.Log("s");
         SceneManager.LoadScene("ゲーム画面(仮)");
         EnemyCount = EnemyNum;
         starttime = SaveTime;
@@ -130,6 +136,10 @@ public class GameManager : MonoBehaviour
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        if (scene.name == "スタート画面")
+            TitleFlag = true;
+        else
+            TitleFlag = false;
         if (scene.name == "ゲーム画面(仮)")
         {
             Initialize();
@@ -251,17 +261,18 @@ public class GameManager : MonoBehaviour
     {
         while (true)
         {
-            if (StartFlag)
-            {
-                TutoText.text = "SnowBallへようこそ!\n今からチュートリアルを始めるよ!";
-                StartFlag = false;
-            }
-            yield return new WaitForSeconds(2f);
             if (First && !CountDownFlag)
             {
-                TutoText.text = "移動はWASD\nジャンプはスペースで行うよ\n左クリックで雪玉を投げて攻撃するよ!\n雪玉が落ちた場所には雪が積もるよ";
-                yield return new WaitForSeconds(2f);
-                CheckText.text = "移動\n攻撃";
+                if (StartFlag)
+                {
+                    TutoText.text = "SnowBallへようこそ!\n今からチュートリアルを始めるよ!";
+                    yield return new WaitForSeconds(2f);
+                    TutoText.text = "移動はWASD\nジャンプはスペースで行うよ\n左クリックで雪玉を投げて攻撃するよ!\n雪玉が落ちた場所には雪が積もるよ";
+                    CheckText.text = "移動\n攻撃";
+                    yield return new WaitForSeconds(2f);
+                    TutoText.text = "";
+                    StartFlag = false;
+                }
                 string str = CheckText.text;
                 if (MoveFlag)
                 {
@@ -277,14 +288,22 @@ public class GameManager : MonoBehaviour
                 {
                     First = false;
                     Second = true;
-                    Player.GetComponent<Taion>().taion = 90f;
+                    Player.GetComponent<Taion>().taion = 80f;
+                    StartFlag = true;
                 }
             }
             if (Second)
             {
-                TutoText.text = "体温が減ってきたね\n体温が0になるか時間切れになると\nゲームオーバーだから気を付けてね!\n体温は焚火の近くに行くと回復するよ!";
-                yield return new WaitForSeconds(2f);
-                CheckText.text = "体温を回復しよう";
+                if (StartFlag)
+                {
+                    DownFlag = true;
+                    TutoText.text = "体温が減ってきたね\n体温が0になるか時間切れになると\nゲームオーバーだから気を付けてね!\n体温は焚火の近くに行くと回復するよ!";
+                    CheckText.text = "体温を回復しよう";
+                    yield return new WaitForSeconds(5f);
+                    TutoText.text = "";
+                    StartFlag = false;
+                }
+                
                 string str2 = CheckText.text;
                 if (HealFlag)
                 {
@@ -292,13 +311,22 @@ public class GameManager : MonoBehaviour
                     CheckText.text = str2;
                     Third = true;
                     Second = false;
+                    StartFlag = true;
                 }
             }
             if(Third)
             {
-                TutoText.text = "次に右クリック長押しで雪玉を集めよう";
-                yield return new WaitForSeconds(2f);
-                CheckText.text = "雪玉を集めよう";
+                if (StartFlag)
+                {
+                    TutoText.text = "焚火に近づくと手持ちの雪玉が全部溶けちゃったね";
+                    yield return new WaitForSeconds(4f);
+                    TutoText.text = "雪の上で右クリック長押しで雪玉を集めよう";
+                    yield return new WaitForSeconds(2f);
+                    TutoText.text = "";
+                    CheckText.text = "雪玉を集めよう";
+                    StartFlag = false;
+                }
+                
                 string str3 = CheckText.text;
                 if (GetFlag)
                 { 
@@ -306,13 +334,13 @@ public class GameManager : MonoBehaviour
                     CheckText.text = str3;
                     Third = false;
                     Fourth = true;
+                    StartFlag = true;
                 }
             }
             if(Fourth)
             {
                 TutoText.text = "最後に今まで学んだことを活かして雪だるまを倒してみよう!";
                 yield return new WaitForSeconds(2f);
-                TutoText.text = "";
                 CheckText.text = "雪だるまを倒そう";
             }
             yield return new WaitForSeconds(1.0f);
