@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1756896096809907155}
-  m_Layer: 2
+  m_Layer: 0
   m_Name: Arm03.R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -41,7 +41,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2171934885836116297}
-  m_Layer: 2
+  m_Layer: 0
   m_Name: Head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -73,7 +73,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1591463347919379096}
-  m_Layer: 2
+  m_Layer: 0
   m_Name: Baler
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -104,7 +104,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1887209696159303055}
-  m_Layer: 2
+  m_Layer: 0
   m_Name: Arm02.L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -144,7 +144,7 @@ GameObject:
   - component: {fileID: 3211941129102240652}
   - component: {fileID: 8423971371758889781}
   - component: {fileID: 5600134784376184152}
-  m_Layer: 2
+  m_Layer: 0
   m_Name: Snowman_double
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -240,9 +240,12 @@ MonoBehaviour:
   Target: {fileID: 0}
   childObj: {fileID: 1591463347919379175}
   ballPrefab: {fileID: 904010653442625431, guid: fa660ee09a85af54495a4fd88859c277, type: 3}
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 256
   SightAngle: 120
   MaxDistance: 40
-  speed: 60
+  speed: 30
   ReloadTime: 3
   waitTime: 2
   HP: 0
@@ -291,7 +294,7 @@ SphereCollider:
   m_GameObject: {fileID: 1934131845329650880}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.59
   m_Center: {x: 0, y: 0.6, z: 0}
@@ -304,10 +307,10 @@ BoxCollider:
   m_GameObject: {fileID: 1934131845329650880}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 2, z: 1}
-  m_Center: {x: 0, y: 1, z: 0}
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1979413685902346838
 GameObject:
   m_ObjectHideFlags: 0
@@ -317,7 +320,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5373046826993439688}
-  m_Layer: 2
+  m_Layer: 0
   m_Name: Scarf02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -349,7 +352,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3924573973220027219}
-  m_Layer: 2
+  m_Layer: 0
   m_Name: Scarf04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -381,7 +384,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3451319469426115104}
-  m_Layer: 2
+  m_Layer: 0
   m_Name: Scarf04_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -412,7 +415,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5090914040152745946}
-  m_Layer: 2
+  m_Layer: 0
   m_Name: Hand.L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -445,7 +448,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6893979034024885187}
   - component: {fileID: 7442681883372625646}
-  m_Layer: 2
+  m_Layer: 0
   m_Name: Snowman_double
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -544,7 +547,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2415067025251576034}
-  m_Layer: 2
+  m_Layer: 0
   m_Name: Arm01.R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -576,7 +579,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2524247789501845352}
-  m_Layer: 2
+  m_Layer: 0
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -611,7 +614,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4031747808736505748}
-  m_Layer: 2
+  m_Layer: 0
   m_Name: Arm03.L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -643,7 +646,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5756832368703384805}
-  m_Layer: 2
+  m_Layer: 0
   m_Name: Hand.R_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -675,7 +678,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 118613005254255162}
-  m_Layer: 2
+  m_Layer: 0
   m_Name: Scarf03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -707,7 +710,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5765194784492472968}
-  m_Layer: 2
+  m_Layer: 0
   m_Name: Arm01.L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -739,7 +742,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6460947239280281522}
-  m_Layer: 2
+  m_Layer: 0
   m_Name: Root
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -771,7 +774,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 949872467973572036}
-  m_Layer: 2
+  m_Layer: 0
   m_Name: Hand.L_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -802,7 +805,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2885730794000189842}
-  m_Layer: 2
+  m_Layer: 0
   m_Name: Scarf01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -834,7 +837,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4392372999187498091}
-  m_Layer: 2
+  m_Layer: 0
   m_Name: Arm02.R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -866,7 +869,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7866785056109268708}
-  m_Layer: 2
+  m_Layer: 0
   m_Name: Armature
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -898,7 +901,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1131977645390962225}
-  m_Layer: 2
+  m_Layer: 0
   m_Name: Hand.R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -930,7 +933,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6331391542231810530}
-  m_Layer: 2
+  m_Layer: 0
   m_Name: Head_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
