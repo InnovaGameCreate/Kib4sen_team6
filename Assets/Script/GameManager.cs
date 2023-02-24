@@ -98,11 +98,14 @@ public class GameManager : MonoBehaviour
 
     public void EndButton()
     {
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;   // UnityEditorの実行を停止する処理
-        #else
+#endif
+#if UNITY_WEBGL
+            SceneManager.LoadScene("スタート画面");
+#else
             Application.Quit();                                // ゲームを終了する処理
-        #endif
+#endif
     }
 
     private void MainUIController()
