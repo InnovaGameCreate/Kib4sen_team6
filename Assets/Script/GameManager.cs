@@ -62,6 +62,7 @@ public class GameManager : MonoBehaviour
 
     public void ClearScene()
     {
+
         EndConduct();
         Result.SetActive(true);
     }
