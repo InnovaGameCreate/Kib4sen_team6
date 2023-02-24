@@ -93,6 +93,11 @@ public class GameManager : MonoBehaviour
         starttime = SaveTime;
     }
 
+    public void TutorialButton()
+    {
+        SceneManager.LoadScene("チュートリアル");
+    }
+
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         if (scene.name == "ゲーム画面(仮)")
