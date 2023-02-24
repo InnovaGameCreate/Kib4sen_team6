@@ -20,6 +20,13 @@ public class Taion : MonoBehaviour
     [SerializeField] private float YukidamaDamage; //雪玉がダメージを受けたときにどれ位減るか
 
     [SerializeField] private Slider TaionBar;
+    [SerializeField] private Image TaionColor;
+    [SerializeField] private Image TaionBG;
+    [SerializeField] private Sprite TemUI1;
+    [SerializeField] private Sprite TemUI2;
+    [SerializeField] private Sprite TemUI3;
+    private Color Tcol;
+    private Animator animator;
 
     // Start is called before the first frame update
     void Start()
@@ -31,14 +38,37 @@ public class Taion : MonoBehaviour
         oncp = taion;
         cx = 0;
         TaionBar.value = 1;
+        animator = GetComponent<Animator>();
+        animator.SetBool("Lose", false);
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(col == false)
+        if (taion <= cp / 3)
         {
-            if(taion > 0.5)
+            Tcol = new Color32(116, 145, 251,255);
+            TaionColor.color = Tcol;
+            TaionBG.sprite = TemUI1;
+        }
+        else if (cp / 3 < taion && taion < 2 * cp / 3)
+        {
+            Tcol = new Color32(163, 0, 92,255);
+            TaionColor.color = Tcol;
+            TaionBG.sprite = TemUI2;
+        }
+        
+        else
+        {
+            Tcol = new Color32(255, 0, 0,255);
+            TaionColor.color = Tcol;
+            TaionBG.sprite = TemUI3;
+        }
+
+        if (col == false)
+        {
+            if (taion > 0.5)
             {
                 x -= dropspeed * Time.deltaTime;
                 taion = oncp / (1 + Mathf.Exp((-x - plux) * a));  //0にならないので条件付けするときなどは注意
@@ -49,6 +79,7 @@ public class Taion : MonoBehaviour
                 taion = 0;
                 TaionBar.value = 0;
                 GameManager.instance.GameOverScene();
+                animator.SetBool("Lose", true);
             }
         }
     }

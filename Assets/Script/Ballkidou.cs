@@ -4,70 +4,72 @@ using UnityEngine;
 
 public class Ballkidou : MonoBehaviour
 {
-    //á‹Ê‚É‚­‚Á‚Â‚¯‚éƒXƒNƒŠƒvƒg
+    //é›ªç‰ã«ãã£ã¤ã‘ã‚‹ã‚¹ã‚¯ãƒªãƒ—ãƒˆ
     private GameObject snowball;
     [SerializeField] private float speed;
     private Vector3 pos;
     private float tyusinkyori;
-    [SerializeField] private float okuyuki; //‰æ–Ê’†S‚Ì‰œs‚«BƒJƒƒ‰‚Ìx‚ÌŠp“x‚Ì’l‚ª0ˆÈ‰º‚Ì‚Ç‚ê‚­‚ç‚¢‚Ì‰œs‚«‚Åá‹Ê‚ª‰æ–Ê’†S‚ğ’Ê‚é‚©‚Ì’l
-    [SerializeField] private float sitanageRot; //ƒJƒƒ‰‚Ìx‚ÌŠp“x‚ª‚±‚Ì’lˆÈã‚É‚È‚Á‚½‚ç’n–Ê‚É‰ˆ‚¤‚æ‚¤‚Éá‹Ê‚ğ“Š‚°‚È‚­‚È‚é
+    [SerializeField] private float okuyuki; //ç”»é¢ä¸­å¿ƒã®å¥¥è¡Œãã€‚ã‚«ãƒ¡ãƒ©ã®xã®è§’åº¦ã®å€¤ãŒ0ä»¥ä¸‹ã®æ™‚ã©ã‚Œãã‚‰ã„ã®å¥¥è¡Œãã§é›ªç‰ãŒç”»é¢ä¸­å¿ƒã‚’é€šã‚‹ã‹ã®å€¤
+    [SerializeField] private float sitanageRot; //ã‚«ãƒ¡ãƒ©ã®xã®è§’åº¦ãŒã“ã®å€¤ä»¥ä¸Šã«ãªã£ãŸã‚‰åœ°é¢ã«æ²¿ã†ã‚ˆã†ã«é›ªç‰ã‚’æŠ•ã’ãªããªã‚‹
     private float x;
     private Vector3 uiballpos;
     private Ray kidou;
     private Vector3 accel;
     [SerializeField] private float waittime;
     private Vector3 force;
-    [SerializeField] private float gensoku; //ÅI“I‚É‚Ç‚êˆÊŒ¸‘¬‚·‚é‚©
-    [SerializeField] private float gravity; //d—Í‚Ì”’l
-    [SerializeField] private float gkasokukankaku; //‚Ç‚ê‚­‚ç‚¢‚ÌŠÔ‚ÌŠÔŠu‚ÅŒ¸‘¬‚·‚é‚©
+    [SerializeField] private float gensoku; //æœ€çµ‚çš„ã«ã©ã‚Œä½æ¸›é€Ÿã™ã‚‹ã‹
+    [SerializeField] private float gravity; //é‡åŠ›ã®æ•°å€¤
+    [SerializeField] private float gkasokukankaku; //ã©ã‚Œãã‚‰ã„ã®æ™‚é–“ã®é–“éš”ã§æ¸›é€Ÿã™ã‚‹ã‹
     [SerializeField] [Tooltip("BreakSnowEffect")] private ParticleSystem particle;
     private ParticleSystem effinst;
-    const int UP = 1;   //·‚èã‚ª‚é‚Ìƒtƒ‰ƒO(SnowBall‚Ì‚à‚Ì‚Æ“¯ˆê)
+    const int UP = 1;   //ç››ã‚Šä¸ŠãŒã‚‹æ™‚ã®ãƒ•ãƒ©ã‚°(SnowBallã®ã‚‚ã®ã¨åŒä¸€)
 
     // Start is called before the first frame update
-    void Start()   //á‹Ê‚ª‰æ–Ê’†S‚É”ò‚ñ‚Å‚¢‚­‚½‚ß‚Ì‘O€”õ
+    void Start()   //é›ªç‰ãŒç”»é¢ä¸­å¿ƒã«é£›ã‚“ã§ã„ããŸã‚ã®å‰æº–å‚™
     {
         Quaternion qua = Camera.main.transform.rotation;
         x = qua.eulerAngles.x * 3.14f / 180;
         if (Camera.main.transform.rotation.x > 0)
         {
-            tyusinkyori = Camera.main.transform.position.y / Mathf.Sin(x);
+            //tyusinkyori = Camera.main.transform.position.y / Mathf.Sin(x);
+
+            tyusinkyori = okuyuki;
         }
         else
         {
             tyusinkyori = okuyuki;
         }
-        uiballpos = new Vector3(Screen.width / 2, Screen.height / 2, tyusinkyori);  //‰æ–Ê’†S‚ÌÀ•W
+        uiballpos = new Vector3(Screen.width / 2, Screen.height / 2, tyusinkyori);  //ç”»é¢ä¸­å¿ƒã®åº§æ¨™
         pos = Camera.main.ScreenToWorldPoint(uiballpos);
-        kidou = new Ray(transform.position, pos - transform.position);   //á‹Ê‚Ì”­ËˆÊ’u‚©‚ç‰æ–Ê’†S•ûŒü‚É”ò‚ñ‚Å‚¢‚­ray
+        kidou = new Ray(transform.position, pos - transform.position);   //é›ªç‰ã®ç™ºå°„ä½ç½®ã‹ã‚‰ç”»é¢ä¸­å¿ƒæ–¹å‘ã«é£›ã‚“ã§ã„ãray
 
         force = kidou.direction * speed;
         if (0 < Camera.main.transform.rotation.x && Camera.main.transform.rotation.x < sitanageRot*Mathf.PI / 180f)
         {
-            force.y = 0;
+            //force.y = 0;
         }
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        this.gameObject.GetComponent<Rigidbody>().AddForce(force); //á‹Ê‚ª^‚Á‚·‚®”ò‚ñ‚Å‚¢‚­
+        this.gameObject.GetComponent<Rigidbody>().AddForce(force); //é›ªç‰ãŒçœŸã£ã™ãé£›ã‚“ã§ã„ã
 
         StartCoroutine(wait(kidou));
     }
 
     private IEnumerator wait(Ray kidou)
     {
-        yield return new WaitForSeconds(waittime); //waittime•bŒã‚É’¼ü‰^“®‚ğ‚â‚ß‚Ä—‰º‚ğn‚ß‚é
+        yield return new WaitForSeconds(waittime); //waittimeç§’å¾Œã«ç›´ç·šé‹å‹•ã‚’ã‚„ã‚ã¦è½ä¸‹ã‚’å§‹ã‚ã‚‹
 
-        for (int i = 0; i < gensoku; i++)  //™X‚ÉŒ¸‘¬
+        for (int i = 0; i < gensoku; i++)  //å¾ã€…ã«æ¸›é€Ÿ
         {
             yield return new WaitForSeconds(0.1f);
             accel = new Vector3(kidou.direction.x * speed * -1 / gensoku, 0, kidou.direction.z * speed * -1 / gensoku); 
             this.gameObject.GetComponent<Rigidbody>().AddForce(accel);
         }
 
-        while (this.transform.position.y > 0)  //á‹Ê‚ÌyÀ•W‚ª0‚É‚È‚é‚Ü‚Åy²•ûŒü‚Ì•‰‚Ì•ûŒü‚É‰Á‘¬
+        while (this.transform.position.y > 0)  //é›ªç‰ã®yåº§æ¨™ãŒ0ã«ãªã‚‹ã¾ã§yè»¸æ–¹å‘ã®è² ã®æ–¹å‘ã«åŠ é€Ÿ
         {
             yield return new WaitForSeconds(gkasokukankaku);
             fall(kidou);
@@ -86,9 +88,9 @@ public class Ballkidou : MonoBehaviour
         effinst.transform.position = this.transform.position;
         effinst.Play();
         Destroy(effinst.gameObject, 3.0f);
-        if (other.gameObject.tag == "Grand") //SnowBall‚Æ“¯ˆê‚Ì‚à‚Ì
+        if (other.gameObject.tag == "Grand") //SnowBallã¨åŒä¸€ã®ã‚‚ã®
         {
-            MapManager.instance.ChangeBlock(other.gameObject, other.gameObject.transform, UP);  //ƒuƒƒbƒN‚Ìİ’u
+            MapManager.instance.ChangeBlock(other.gameObject, other.gameObject.transform, UP);  //ãƒ–ãƒ­ãƒƒã‚¯ã®è¨­ç½®
         }
         Destroy(this.gameObject);
     }
