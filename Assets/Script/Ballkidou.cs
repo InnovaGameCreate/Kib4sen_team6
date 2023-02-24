@@ -45,7 +45,6 @@ public class Ballkidou : MonoBehaviour
         if (0 < Camera.main.transform.rotation.x && Camera.main.transform.rotation.x < sitanageRot*Mathf.PI / 180f)
         {
             force.y = 0;
-            Debug.Log("a");
         }
     }
 

@@ -124,16 +124,17 @@ public class Enemy : MonoBehaviour
     public bool IsVisible() //視界に入っているか判定
     {
         var SelfPos = Self.position;    //自身の位置
-
         var TargetPos = Target.position;    //ターゲットの位置
 
         var SelfDir = Self.forward; //自身の向き
 
         var TargetDir = TargetPos - SelfPos;    //自分から見た敵の方向
+        var TargetDirnol = TargetDir;
+        TargetDirnol.y = 0f;
         TargetDistance = TargetDir.magnitude;   //ターゲットとの距離
 
         var CosHalf = Mathf.Cos(SightAngle / 2 * Mathf.Deg2Rad);    //cos(θ/2)を計算
-        var InnerProduct = Vector3.Dot(SelfDir, TargetDir.normalized);  //内積を計算
+        var InnerProduct = Vector3.Dot(SelfDir, TargetDirnol.normalized);  //内積を計算
 
 
         CosDiv1 = Mathf.Cos(SightAngle / 6 * Mathf.Deg2Rad);    //cos(θ/6)を計算
@@ -182,14 +183,14 @@ public class Enemy : MonoBehaviour
 
         }
 
-
+        Debug.Log("CosHalf" + CosHalf);
+        Debug.Log("InnerProduct" + InnerProduct);
         NearFlag = TargetDistance <= distance;
         var visiable = InnerProduct > CosHalf && TargetDistance < MaxDistance;  //角度判定かつ距離判定
         if (visiable)
             visiable = JudgWall(TargetDir, TargetDistance);
         if(NearFlag)
             NearFlag = JudgWall(TargetDir, TargetDistance);
-
 
         return visiable;
     }
@@ -207,7 +208,7 @@ public class Enemy : MonoBehaviour
 
     private void StateManager()
     {
-        //Debug.Log(currentState);
+        Debug.Log(currentState);
         switch (currentState)
         {
             case State.Serch:
@@ -335,7 +336,7 @@ public class Enemy : MonoBehaviour
             {
                 var CosDiv = CosDiv1 = Mathf.Cos(SightAngle / 12 * Mathf.Deg2Rad);    //cos(θ/6)を計算
                 var InnerProduct = Vector3.Dot(Self.forward, (Target.position - Self.position).normalized);  //内積を計算
-                if (IntFlag && InnerProduct > CosDiv)    //アニメーションを起動する一回だけ起動
+                if (IntFlag)    //アニメーションを起動する一回だけ起動
                 {
                     characterAnim.Play("Snowman_double_Throw");
                     TurnFlag = false;   //投げるときは向きを固定
@@ -365,7 +366,7 @@ public class Enemy : MonoBehaviour
                 if (ShotFlag)
                 {
                 //ShotDir = RandomAngle(Bayesian()); //ベイズ推定
-                    ShotDir = PredictShot();
+                    ShotDir = AccuracyController(PredictShot());
                     ball.transform.parent = null;
                     ballRigidbody.AddForce(ShotDir.normalized * speed, ForceMode.Impulse);
                     ball.GetComponent<SphereCollider>().enabled = true;
@@ -548,11 +549,12 @@ public class Enemy : MonoBehaviour
     }
     */
 
-    void OnCollisionEnter(Collision collision)
+    void OnTriggerEnter(Collider collision)
     {
         if(collision.gameObject.tag == "SnowBall")
         {
             HP--;
+            Debug.Log(HP);
             if(HP == 0)
             {
                 ChangeState(State.Dead);
@@ -624,8 +626,19 @@ public class Enemy : MonoBehaviour
         
     }
 
-    private void AccuracyController()
+    private Vector3 AccuracyController(Vector3 Dir)   //命中精度設定
     {
-
+        float rnd = Random.Range(0f, 1f);　// ※ 1～10の範囲でランダムな整数値が返る
+        if(rnd >= 0.2f)
+        {
+            Vector3 RandomDir;
+            var pm = Random.Range(0, 2);
+            if (pm == 0)
+                RandomDir = Quaternion.Euler(0, rnd, 0) * Dir;   //ランダムな発射方向
+            else
+                RandomDir = Quaternion.Euler(0, -rnd, 0) * Dir;
+            return RandomDir;
+        }
+        return Dir;
     }
 }
