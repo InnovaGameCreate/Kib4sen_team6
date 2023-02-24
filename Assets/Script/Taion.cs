@@ -26,6 +26,7 @@ public class Taion : MonoBehaviour
     [SerializeField] private Sprite TemUI2;
     [SerializeField] private Sprite TemUI3;
     private Color Tcol;
+    private Animator animator;
 
     // Start is called before the first frame update
     void Start()
@@ -37,7 +38,8 @@ public class Taion : MonoBehaviour
         oncp = taion;
         cx = 0;
         TaionBar.value = 1;
-
+        animator = GetComponent<Animator>();
+        animator.SetBool("Lose", false);
 
     }
 
@@ -77,6 +79,7 @@ public class Taion : MonoBehaviour
                 taion = 0;
                 TaionBar.value = 0;
                 GameManager.instance.GameOverScene();
+                animator.SetBool("Lose", true);
             }
         }
     }
