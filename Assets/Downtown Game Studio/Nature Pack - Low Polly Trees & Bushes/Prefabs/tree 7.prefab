@@ -11,8 +11,14 @@ GameObject:
   - component: {fileID: 1735957501414348965}
   - component: {fileID: 3438647519154083584}
   - component: {fileID: 602480672508339146}
-  - component: {fileID: 2278229165897908040}
-  m_Layer: 0
+  - component: {fileID: 2859167245761753589}
+  - component: {fileID: 7006704237691721776}
+  - component: {fileID: 4925093568508457958}
+  - component: {fileID: 1961748438510328768}
+  - component: {fileID: 3447356226996449510}
+  - component: {fileID: 7713064574384034343}
+  - component: {fileID: 8200483276745976648}
+  m_Layer: 8
   m_Name: tree 7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -28,7 +34,8 @@ Transform:
   m_GameObject: {fileID: 1395144512976339487}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2.2463, y: 2.2463, z: 2.2463}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -52,6 +59,7 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -82,7 +90,21 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &2278229165897908040
+--- !u!136 &2859167245761753589
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1395144512976339487}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.2738219
+  m_Height: 1.7108507
+  m_Direction: 1
+  m_Center: {x: 0.027790416, y: 0.62446296, z: 0.017561015}
+--- !u!65 &7006704237691721776
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -93,5 +115,70 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.042840905, y: 0.047455955, z: 0.10474383}
-  m_Center: {x: 0.00055580866, y: 0, z: 0.051752523}
+  m_Size: {x: 1.8702877, y: 0.58697885, z: 2.3727982}
+  m_Center: {x: 0.02131895, y: 1.4450015, z: 0}
+--- !u!65 &4925093568508457958
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1395144512976339487}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.8444078, y: 0.6652752, z: 1.7084827}
+  m_Center: {x: 0.034260612, y: 2.0701683, z: 0.0000004245534}
+--- !u!65 &1961748438510328768
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1395144512976339487}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.598531, y: 0.6325132, z: 1.5994022}
+  m_Center: {x: 0.027789993, y: 2.7006602, z: -0.02974591}
+--- !u!65 &3447356226996449510
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1395144512976339487}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.3397155, y: 0.51352704, z: 1.4328254}
+  m_Center: {x: 0.07955191, y: 3.2836807, z: -0.0059491605}
+--- !u!65 &7713064574384034343
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1395144512976339487}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.10678, y: 0.77450854, z: 1.0815935}
+  m_Center: {x: 0.13131613, y: 3.9392447, z: -0.021283923}
+--- !u!65 &8200483276745976648
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1395144512976339487}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.70561624, y: 0.8596434, z: 0.7410561}
+  m_Center: {x: 0.1507275, y: 4.7763996, z: -0.007094818}

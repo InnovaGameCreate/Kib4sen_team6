@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(AudioSource))]
 public class PlayerController_Test : MonoBehaviour
 {
     private Rigidbody myrigidbody;
@@ -17,6 +18,12 @@ public class PlayerController_Test : MonoBehaviour
     private bool isGathering = false;
     GameObject Bullet;
 
+    // 音声関連
+    private AudioSource gatheringSound; // 雪玉を集めるSE
+    private AudioSource throwSound;     // 雪玉を投げるSE
+    [SerializeField] float pitchRange = 0.1f; // ピッチのランダム幅
+    //
+
     [SerializeField] private GameObject[] YukidamaUI;
     [SerializeField] private float YukidamaDeleteTime; //焚火に接触したときに手持ち雪玉が減少していく時間の間隔
     private float ytime;
@@ -28,6 +35,10 @@ public class PlayerController_Test : MonoBehaviour
         animator = GetComponent<Animator>();
         Distance = 0.3f;
         
+        // 音声関連
+        gatheringSound = GetComponents<AudioSource>()[0];
+        throwSound = GetComponents<AudioSource>()[1];
+        //
     }
 
     // Update is called once per frame
@@ -47,7 +58,7 @@ public class PlayerController_Test : MonoBehaviour
     }
     private void PlayerMove()
     {
-        if (Input.GetMouseButtonDown(0) && !animator.IsInTransition(0) && !animator.GetCurrentAnimatorStateInfo(0).IsName("Throw") && !animator.GetCurrentAnimatorStateInfo(0).IsName("Gathering") && !animator.GetCurrentAnimatorStateInfo(0).IsName("GatherFinish") && !animator.GetCurrentAnimatorStateInfo(0).IsName("JunpToTop") && !animator.GetCurrentAnimatorStateInfo(0).IsName("TopOfJump") && !animator.GetCurrentAnimatorStateInfo(0).IsName("TopToGround") && !animator.GetCurrentAnimatorStateInfo(0).IsName("Running@loop"))
+        if (Input.GetMouseButtonDown(0) && !animator.IsInTransition(0) && !animator.GetCurrentAnimatorStateInfo(0).IsName("Throw") && !animator.GetCurrentAnimatorStateInfo(0).IsName("Gathering") && !animator.GetCurrentAnimatorStateInfo(0).IsName("GatherFinish") && !animator.GetCurrentAnimatorStateInfo(0).IsName("JumpToTop") && !animator.GetCurrentAnimatorStateInfo(0).IsName("TopOfJump") && !animator.GetCurrentAnimatorStateInfo(0).IsName("TopToGround")/* && !animator.GetCurrentAnimatorStateInfo(0).IsName("Running@loop")*/)
         {
             if (Remaining > 0)
             {
@@ -67,7 +78,7 @@ public class PlayerController_Test : MonoBehaviour
     
     private void ShotSnowBall()
     {
-        if(!animator.GetCurrentAnimatorStateInfo(0).IsName("GatherStart") && !animator.GetCurrentAnimatorStateInfo(0).IsName("Gathering") && !animator.GetCurrentAnimatorStateInfo(0).IsName("GatherFinish") && !animator.GetCurrentAnimatorStateInfo(0).IsName("JunpToTop") && !animator.GetCurrentAnimatorStateInfo(0).IsName("TopOfJump") && !animator.GetCurrentAnimatorStateInfo(0).IsName("TopToGround") && !animator.GetCurrentAnimatorStateInfo(0).IsName("Running@loop"))
+        if(!animator.IsInTransition(0) &&!animator.GetCurrentAnimatorStateInfo(0).IsName("GatherStart") && !animator.GetCurrentAnimatorStateInfo(0).IsName("Gathering") && !animator.GetCurrentAnimatorStateInfo(0).IsName("GatherFinish") && !animator.GetCurrentAnimatorStateInfo(0).IsName("JumpToTop") && !animator.GetCurrentAnimatorStateInfo(0).IsName("TopOfJump") && !animator.GetCurrentAnimatorStateInfo(0).IsName("TopToGround") /*&& !animator.GetCurrentAnimatorStateInfo(0).IsName("Running@loop")*/)
         {
             Bullet = transform.GetChild(3).gameObject;
             Vector3 ShotPos = Bullet.transform.position;
@@ -76,8 +87,8 @@ public class PlayerController_Test : MonoBehaviour
             animator.SetBool("Throw", true);
             Invoke(nameof(ThrowStop), 0.2f);
             YukidamaUI[Remaining].SetActive(false);
+            PlayThrowSound(); // 音声を再生
         }
-        
     }
     
     private void ShotRay()
@@ -92,21 +103,23 @@ public class PlayerController_Test : MonoBehaviour
             block = hit.collider.gameObject;
             
             if (block.CompareTag("Grand") && Remaining < 10 && isGround && isGathering == false)
-            {                
+            {
                 animator.SetBool("Gather", true);
                 Invoke(nameof(Gather), 0.1f);
                 isGathering = true;
-            }        
+            }
         }
     }
     private void Gather()
     {
-        if (Remaining < 10 && block.CompareTag("Grand") && animator.GetCurrentAnimatorStateInfo(0).IsName("Gathering"))
+        if (Remaining < 10 && block.CompareTag("Grand") && animator.GetCurrentAnimatorStateInfo(0).IsName("Gathering") && block.name != "Snow_0_3(Clone)")
         {
             Remaining++;
             YukidamaUI[Remaining - 1].SetActive(true);
             MapManager.instance.ChangeBlock(block, pos, DOWN);
-            
+            PlayGatheringSound(); // 音声の再生
+        } else if(block.name == "Snow_0_3(Clone)"){
+            animator.SetBool("Gather", false); // 雪が存在しないブロックの場合、Gatheringアニメーションを中止
         }
         isGathering = false;
     }
@@ -134,7 +147,6 @@ public class PlayerController_Test : MonoBehaviour
                 YukidamaDecrease();
 
             }
-
         }
     }
 
@@ -146,4 +158,15 @@ public class PlayerController_Test : MonoBehaviour
         }
     }
 
+    // 音声関連
+    private void PlayGatheringSound()
+    {
+        gatheringSound.pitch = 0.75f + Random.Range(-pitchRange, pitchRange);
+        gatheringSound.PlayOneShot(gatheringSound.clip);
+    }
+    private void PlayThrowSound()
+    {
+        throwSound.pitch = 0.75f + Random.Range(-pitchRange, pitchRange);
+        throwSound.PlayOneShot(throwSound.clip);
+    }
 }

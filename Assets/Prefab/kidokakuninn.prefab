@@ -111,11 +111,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72c394e9574648a4b9bf823b60f00b03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
-  okuyuki: 20.92
+  speed: 25
+  okuyuki: 20
   sitanageRot: 20
-  waittime: 1
-  gensoku: 5
+  waittime: 0.2
+  gensoku: 2
   gravity: 1
   gkasokukankaku: 0.1
   particle: {fileID: 1576920850157119680, guid: 60dc568e68ab13145b8b43c2e3b07981, type: 3}
