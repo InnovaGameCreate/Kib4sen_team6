@@ -2,10 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(AudioSource))]
 public class CameraMove : MonoBehaviour
 {
     float x, y, z;
-    float speed = 0.1f;
+    [SerializeField] private float runningSpeed = 0.1f;
+    [SerializeField] private float gatheringSpeed = 0.1f;
 
     public GameObject cam;
     Quaternion cameraRot, characterRot;
@@ -13,8 +15,13 @@ public class CameraMove : MonoBehaviour
 
     bool cursorLock = true;
 
-    //•Ï”‚ÌéŒ¾(Šp“x‚Ì§ŒÀ—p)
+    //ï¿½Ïï¿½ï¿½ÌéŒ¾(ï¿½pï¿½xï¿½Ìï¿½ï¿½ï¿½ï¿½p)
     float minX = -60f, maxX = 47f;
+
+    // éŸ³å£°é–¢é€£
+    private AudioSource runningSound; // èµ°ã‚‹SE
+    [SerializeField] float pitchRange = 0.1f; // ãƒ”ãƒƒãƒã®ãƒ©ãƒ³ãƒ€ãƒ å¹…
+    //
 
     private Animator animator;
     // Start is called before the first frame update
@@ -23,6 +30,9 @@ public class CameraMove : MonoBehaviour
         cameraRot = cam.transform.localRotation;
         characterRot = transform.localRotation;
         animator = GetComponent<Animator>();
+        // éŸ³å£°ã®å–å¾—
+        runningSound = GetComponents<AudioSource>()[4];
+        //
     }
 
     // Update is called once per frame
@@ -34,7 +44,7 @@ public class CameraMove : MonoBehaviour
         cameraRot *= Quaternion.Euler(-yRot, 0, 0);
         characterRot *= Quaternion.Euler(0, xRot, 0);
 
-        //Update‚Ì’†‚Åì¬‚µ‚½ŠÖ”‚ğŒÄ‚Ô
+        //Updateï¿½Ì’ï¿½ï¿½Åì¬ï¿½ï¿½ï¿½ï¿½ï¿½Öï¿½ï¿½ï¿½ï¿½Ä‚ï¿½
         cameraRot = ClampRotation(cameraRot);
 
         cam.transform.localRotation = cameraRot;
@@ -50,14 +60,14 @@ public class CameraMove : MonoBehaviour
         y = 0;
         z = 0;
 
-        x = Input.GetAxisRaw("Horizontal") * speed;
-        z = Input.GetAxisRaw("Vertical") * speed;
+        x = Input.GetAxisRaw("Horizontal");
+        z = Input.GetAxisRaw("Vertical");
 
         //transform.position += new Vector3(x,y,z);
 
         if(animator.GetCurrentAnimatorStateInfo(0).IsName("TopOfJump") || animator.GetCurrentAnimatorStateInfo(0).IsName("Running@loop") || animator.GetCurrentAnimatorStateInfo(0).IsName("JumpToTop"))
         {
-            transform.position += cam.transform.forward * z * 2 / 5 + cam.transform.right * x * 2 / 5 ;
+            transform.position += (cam.transform.forward * z + cam.transform.right * x).normalized * 2 / 5 * runningSpeed;
         }
 
         if (x > 0 || x < 0 || z > 0 || z < 0)
@@ -67,6 +77,12 @@ public class CameraMove : MonoBehaviour
         else
         {
             animator.SetBool("Running", false);
+        }
+
+        // Gatheringä¸­ã®ç§»å‹•
+        if(animator.GetCurrentAnimatorStateInfo(0).IsName("Gathering"))
+        {
+            transform.position += (cam.transform.forward * z  + cam.transform.right * x).normalized * 2 / 5 * gatheringSpeed;
         }
     }
 
@@ -93,10 +109,10 @@ public class CameraMove : MonoBehaviour
         }
     }
 
-    //Šp“x§ŒÀŠÖ”‚Ìì¬
+    //ï¿½pï¿½xï¿½ï¿½ï¿½ï¿½ï¿½Öï¿½ï¿½Ìì¬
     public Quaternion ClampRotation(Quaternion q)
     {
-        //q = x,y,z,w (x,y,z‚ÍƒxƒNƒgƒ‹i—Ê‚ÆŒü‚«jFw‚ÍƒXƒJƒ‰[iÀ•W‚Æ‚Í–³ŠÖŒW‚Ì—Êj)
+        //q = x,y,z,w (x,y,zï¿½Íƒxï¿½Nï¿½gï¿½ï¿½ï¿½iï¿½Ê‚ÆŒï¿½ï¿½ï¿½ï¿½jï¿½Fwï¿½ÍƒXï¿½Jï¿½ï¿½ï¿½[ï¿½iï¿½ï¿½ï¿½Wï¿½Æ‚Í–ï¿½ï¿½ÖŒWï¿½Ì—Êj)
 
         q.x /= q.w;
         q.y /= q.w;
@@ -112,5 +128,10 @@ public class CameraMove : MonoBehaviour
         return q;
     }
 
-
+    // èµ°ã‚‹éŸ³å£°ã‚’å†ç”Ÿã™ã‚‹é–¢æ•°
+    private void FootStepSE()
+    {
+        runningSound.pitch = 0.75f + Random.Range(-pitchRange, pitchRange);
+        runningSound.PlayOneShot(runningSound.clip);
+    }
 }
