@@ -127,7 +127,7 @@ public class PlayerController_Test : MonoBehaviour
     {
         animator.SetBool("Throw", false);
     }
-
+    
     private void YukidamaDecrease()
     {
         if (Remaining > 0)
