@@ -65,7 +65,7 @@ public class CameraMove : MonoBehaviour
 
         //transform.position += new Vector3(x,y,z);
 
-        if(animator.GetCurrentAnimatorStateInfo(0).IsName("TopOfJump") || animator.GetCurrentAnimatorStateInfo(0).IsName("Running@loop") || animator.GetCurrentAnimatorStateInfo(0).IsName("JumpToTop"))
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("TopOfJump") || animator.GetCurrentAnimatorStateInfo(0).IsName("Running@loop") || animator.GetCurrentAnimatorStateInfo(0).IsName("JumpToTop"))
         {
             transform.position += (cam.transform.forward * z + cam.transform.right * x).normalized * 2 / 5 * runningSpeed;
         }
@@ -80,9 +80,9 @@ public class CameraMove : MonoBehaviour
         }
 
         // Gathering中の移動
-        if(animator.GetCurrentAnimatorStateInfo(0).IsName("Gathering"))
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Gathering"))
         {
-            transform.position += (cam.transform.forward * z  + cam.transform.right * x).normalized * 2 / 5 * gatheringSpeed;
+            transform.position += (cam.transform.forward * z + cam.transform.right * x).normalized * 2 / 5 * gatheringSpeed;
         }
     }
 

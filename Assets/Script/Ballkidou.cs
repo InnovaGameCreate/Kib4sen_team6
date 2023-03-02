@@ -8,10 +8,12 @@ public class Ballkidou : MonoBehaviour
     private GameObject snowball;
     [SerializeField] private float speed;
     private Vector3 pos;
+
     private float tyusinkyori;
     [SerializeField] private float okuyuki; //画面中心の奥行き。カメラのxの角度の値が0以下の時どれくらいの奥行きで雪玉が画面中心を通るかの値
     [SerializeField] private float sitanageRot; //カメラのxの角度がこの値以上になったら地面に沿うように雪玉を投げなくなる
     private float x;
+
     private Vector3 uiballpos;
     private Ray kidou;
     private Vector3 accel;
@@ -20,11 +22,12 @@ public class Ballkidou : MonoBehaviour
     [SerializeField] private float gensoku; //最終的にどれ位減速するか
     [SerializeField] private float gravity; //重力の数値
     [SerializeField] private float gkasokukankaku; //どれくらいの時間の間隔で減速するか
+
     [SerializeField] [Tooltip("BreakSnowEffect")] private ParticleSystem particle;
     private ParticleSystem effinst;
+
     const int UP = 1;   //盛り上がる時のフラグ(SnowBallのものと同一)
 
-    // Start is called before the first frame update
     void Start()   //雪玉が画面中心に飛んでいくための前準備
     {
         Quaternion qua = Camera.main.transform.rotation;
@@ -50,7 +53,6 @@ public class Ballkidou : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
     void FixedUpdate()
     {
         this.gameObject.GetComponent<Rigidbody>().AddForce(force); //雪玉が真っすぐ飛んでいく
