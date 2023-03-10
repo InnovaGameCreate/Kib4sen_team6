@@ -29,6 +29,7 @@ public class MapManager : MonoBehaviour
     private GameObject[] U_DBlockPrefab;  //下
     private MapInfo[,] mapinfos;
     private Vector3 Temp_Pos;
+    private GameObject Temp_Obj;
     [SerializeField] private GameObject TakibiNearPrefab;
     public struct MapInfo
     {
@@ -65,7 +66,7 @@ public class MapManager : MonoBehaviour
         {
             for(int j = 0; j < 100; j++)
             {
-                mapinfos[i,j] = new MapInfo(0, 0, 0);  //メンバを0で初期化
+                mapinfos[i,j] = new MapInfo(1, 0, 0);  //メンバを0で初期化
             }
         }
         UpFlag = false;
@@ -92,52 +93,71 @@ public class MapManager : MonoBehaviour
             ChangeSnowState(block, blockPos, Check);
 
             Temp_Pos = blockPos.position;
-
+            var ObjName = blockPos.position.x.ToString() + mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].y.ToString() + blockPos.position.z.ToString();  //生成したオブジェクトの名前を座標に変換
             if (mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowState == -1) //凹むようにブロックを置き換え
             {
-                Temp_Pos.y = 0;
-                Destroy(block);
-                Instantiate(D_CBlockPrefab[1], Temp_Pos, Quaternion.identity);
+                if (mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].y == 1) //初回だけそのブロックを破壊
+                {
+                    Destroy(block);
+                    mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].y--;
+                }
+                else
+                {
+                    var obj = GameObject.Find(ObjName); //当たったXZ座標の一番上のブロックを取得
+                    Destroy(obj);
+                }
+                ObjName = blockPos.position.x.ToString() + mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].y.ToString() + blockPos.position.z.ToString();  //生成したオブジェクトの名前を座標に変換
+                Temp_Obj = (GameObject)Instantiate(D_CBlockPrefab[0], Temp_Pos, Quaternion.identity);
+                Temp_Obj.name = ObjName;    //生成したオブジェクトの名前を座標に変更  
             }
             if (mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowState == -2)
             {
-                Temp_Pos.y = 0;///
-                Destroy(block);
-                Instantiate(D_CBlockPrefab[2], Temp_Pos, Quaternion.identity);
+                var obj = GameObject.Find(ObjName); //当たったXZ座標の一番上のブロックを取得
+                Destroy(obj);
+                Temp_Obj = (GameObject)Instantiate(D_CBlockPrefab[1], Temp_Pos, Quaternion.identity);
+                Temp_Obj.name = ObjName;    //生成したオブジェクトの名前を座標に変更  
             }
             if (mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowState == -3)
             {
-                Temp_Pos.y = 0;///
-                Destroy(block);
-                Instantiate(D_CBlockPrefab[3], Temp_Pos, Quaternion.identity);
+                var obj = GameObject.Find(ObjName); //当たったXZ座標の一番上のブロックを取得
+                Destroy(obj);
+                Temp_Obj = (GameObject)Instantiate(D_CBlockPrefab[2], Temp_Pos, Quaternion.identity);
+                Temp_Obj.name = ObjName;    //生成したオブジェクトの名前を座標に変更
             }
             if (mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowState == -4)
             {
-                Temp_Pos.y = -0.49f;///
-                Destroy(block);
-                Instantiate(D_CBlockPrefab[4], Temp_Pos, Quaternion.identity);
+                var obj = GameObject.Find(ObjName); //当たったXZ座標の一番上のブロックを取得
+                Destroy(obj);
+                Temp_Pos.y = -0.5f;
+                Temp_Obj = (GameObject)Instantiate(D_CBlockPrefab[3], Temp_Pos, Quaternion.identity);
+                Temp_Obj.name = ObjName;    //生成したオブジェクトの名前を座標に変更
             }
 
             if (mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowState == 1)    //盛り上がるようにブロックを設置
             {
-                Destroy(block);
-                UpFlag = false; //一度だけ実行されるように
-                Temp_Pos.y = 0.1666648f;
-                Instantiate(U_CBlockPrefab[0], Temp_Pos, Quaternion.identity);
+                Temp_Pos.y = mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].y;
+                Temp_Obj = (GameObject)Instantiate(U_CBlockPrefab[0], Temp_Pos, Quaternion.identity);
+                Temp_Obj.name = ObjName;    //生成したオブジェクトの名前を座標に変更
             }
             if (mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowState == 2)
             {
-                Temp_Pos.y = 0.3333298f;
-                Destroy(block);
-                UpFlag = false;
-                Instantiate(U_CBlockPrefab[1], Temp_Pos, Quaternion.identity);
+                var obj = GameObject.Find(ObjName); //当たったXZ座標の一番上のブロックを取得
+                Destroy(obj);
+                Temp_Pos.y = mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].y;
+                Temp_Obj = (GameObject)Instantiate(U_CBlockPrefab[1], Temp_Pos, Quaternion.identity);
+                Temp_Obj.name = ObjName;    //生成したオブジェクトの名前を座標に変更
             }
             if (mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowState == 3)
             {
-                Temp_Pos.y = 0.5f;
-                Destroy(block);
-                UpFlag = false;
-                Instantiate(U_CBlockPrefab[2], Temp_Pos, Quaternion.identity);
+                var obj = GameObject.Find(ObjName); //当たったXZ座標の一番上のブロックを取得
+                Destroy(obj);
+                Temp_Pos.y = mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].y;
+                Temp_Obj = (GameObject)Instantiate(U_CBlockPrefab[2], Temp_Pos, Quaternion.identity);
+                Temp_Obj.name = ObjName;    //生成したオブジェクトの名前を座標に変更
+                mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].y++;   //一段上がった事を反映
+                //各値の初期化
+                mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowState = 0;
+                mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowCount = 0;
             }
 
             if (Check == 2)
@@ -167,20 +187,17 @@ public class MapManager : MonoBehaviour
             case -7:
                 mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowState = -3;
                 break;
-            case -10:
+            case -10:   //10回で1ブロックなくなる
                 mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowState = -4;
                 break;
             case 1:
                 mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowState = 1;
-                UpFlag = true;
                 break;
-            case 3:
+            case 2:
                 mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowState = 2;
-                UpFlag = true;
                 break;
-            case 7:
+            case 4: //4回で1ブロック増える
                 mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowState = 3;
-                UpFlag = true;
                 break;
         }
     }
