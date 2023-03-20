@@ -68,7 +68,6 @@ public class PlayerController_Test : MonoBehaviour
         if (Input.GetMouseButton(1) && !animator.IsInTransition(0))
         {
             ShotRay();
-            Debug.Log("bo");
         }
         if (Input.GetMouseButtonUp(1) || Remaining == 10)
         {
