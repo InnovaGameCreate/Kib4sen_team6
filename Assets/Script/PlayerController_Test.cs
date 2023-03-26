@@ -77,7 +77,14 @@ public class PlayerController_Test : MonoBehaviour
     
     private void ShotSnowBall()
     {
-        if(!animator.IsInTransition(0) &&!animator.GetCurrentAnimatorStateInfo(0).IsName("GatherStart") && !animator.GetCurrentAnimatorStateInfo(0).IsName("Gathering") && !animator.GetCurrentAnimatorStateInfo(0).IsName("GatherFinish") && !animator.GetCurrentAnimatorStateInfo(0).IsName("JumpToTop") && !animator.GetCurrentAnimatorStateInfo(0).IsName("TopOfJump") && !animator.GetCurrentAnimatorStateInfo(0).IsName("TopToGround") /*&& !animator.GetCurrentAnimatorStateInfo(0).IsName("Running@loop")*/)
+        if(!animator.IsInTransition(0) &&
+           !animator.GetCurrentAnimatorStateInfo(0).IsName("GatherStart") && 
+           !animator.GetCurrentAnimatorStateInfo(0).IsName("Gathering") && 
+           !animator.GetCurrentAnimatorStateInfo(0).IsName("GatherFinish") && 
+           !animator.GetCurrentAnimatorStateInfo(0).IsName("JumpToTop") && 
+           !animator.GetCurrentAnimatorStateInfo(0).IsName("TopOfJump") && 
+           !animator.GetCurrentAnimatorStateInfo(0).IsName("TopToGround") 
+           )
         {
             Bullet = transform.GetChild(3).gameObject;
             Vector3 ShotPos = Bullet.transform.position;

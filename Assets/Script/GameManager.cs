@@ -18,6 +18,8 @@ public class GameManager : MonoBehaviour
     private GameObject MainUI;
     private GameObject CountDown;
     private GameObject Timer;
+    private GameObject PoseUI;
+    private GameObject SettingUI;
     private GameObject Tutorial;
     private GameObject CheckList;
     private Text TutoText;
@@ -45,6 +47,8 @@ public class GameManager : MonoBehaviour
     private bool Second;
     private bool Third;
     private bool Fourth;
+
+    bool PushEscape = false;
     private void Awake()    //シングルトン
     {
         if (instance == null)
@@ -80,7 +84,27 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(!TitleFlag)
+        if(Input.GetKeyDown(KeyCode.Escape) && !PoseUI.activeInHierarchy && !PushEscape)    //ポーズ画面が非アクティブの時にESCが押されたら
+        {
+            PushEscape = true;
+            MainUI.SetActive(false);
+            PoseUI.SetActive(true);
+            Time.timeScale = 0;
+            EndConduct();
+        }
+        if(Input.GetKeyDown(KeyCode.Escape) && PoseUI.activeInHierarchy && !PushEscape)
+        {
+            MainUI.SetActive(true);
+            PoseUI.SetActive(false);
+            Time.timeScale = 1;
+            Player.GetComponent<PlayerController_Test>().enabled = true;
+            Player.GetComponent<CameraMove>().enabled = true;
+            Player.GetComponent<Taion>().enabled = true;
+        }
+        if(Input.GetKeyUp(KeyCode.Escape))
+            PushEscape = false;
+
+        if (!TitleFlag)
             MainUIController();
         if (TutorialFlag)
         {
@@ -105,6 +129,7 @@ public class GameManager : MonoBehaviour
     public void ReturnTitle()
     {
         SceneManager.LoadScene("スタート画面");
+        Time.timeScale = 1;
     }
 
     public void EnemyDeath()
@@ -116,6 +141,25 @@ public class GameManager : MonoBehaviour
             ClearScene();
     }
 
+    public void SettingButton()
+    {
+        PoseUI.SetActive(false);
+        SettingUI.SetActive(true);
+    }
+    public void BackToGameButton()
+    {
+        MainUI.SetActive(true);
+        PoseUI.SetActive(false);
+        Time.timeScale = 1;
+        Player.GetComponent<PlayerController_Test>().enabled = true;
+        Player.GetComponent<CameraMove>().enabled = true;
+        Player.GetComponent<Taion>().enabled = true;
+    }
+    public void BackButton()
+    {
+        PoseUI.SetActive(true);
+        SettingUI.SetActive(false);
+    }
     public void RetryButton()
     {
         SceneManager.LoadScene("ゲーム画面(仮)");
@@ -216,8 +260,12 @@ public class GameManager : MonoBehaviour
         Player = GameObject.Find("Player");
         Result = GameObject.Find("ClearCanvas");
         GameOverCanvas = GameObject.Find("GameOverCanvas");
+        SettingUI = GameObject.Find("SettingCanvas");
+        PoseUI = GameObject.Find("PoseCanvas");
         Result.SetActive(false);
         GameOverCanvas.SetActive(false);
+        SettingUI.SetActive(false);
+        PoseUI.SetActive(false);
         Player.GetComponent<PlayerController_Test>().enabled = false;
         Player.GetComponent<CameraMove>().enabled = false;
         PlayerAnim = Player.GetComponent<Animator>();
