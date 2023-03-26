@@ -29,6 +29,20 @@ public class ButtonScript : MonoBehaviour
 
     public void ReturnTitle()
     {
-
+        GameManager.instance.ReturnTitle();
     }
+
+    public void BackToGame()
+    {
+        GameManager.instance.BackToGameButton();
+    }
+    public void Setting()
+    {
+        GameManager.instance.SettingButton();
+    }
+    public void Back()
+    {
+        GameManager.instance.BackButton();
+    }
+
 }

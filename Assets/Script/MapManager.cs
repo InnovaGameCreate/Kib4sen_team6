@@ -93,7 +93,7 @@ public class MapManager : MonoBehaviour
     {
 
         ChangeSnowState(block, blockPos, Check);
-        Debug.Log("State:"+mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowState);
+        //Debug.Log("State:"+mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowState);
         Temp_Pos = blockPos.position;
         var ObjName = blockPos.position.x.ToString() + mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].y.ToString() + blockPos.position.z.ToString();  //生成したオブジェクトの名前を座標に変換
         
@@ -108,7 +108,7 @@ public class MapManager : MonoBehaviour
             else
             {
                 var obj = GameObject.Find(ObjName); //当たったXZ座標の一番上のブロックを取得
-                Debug.Log("name:" + ObjName);
+                //Debug.Log("name:" + ObjName);
                 Destroy(obj);
             }
             ObjName = blockPos.position.x.ToString() + mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].y.ToString() + blockPos.position.z.ToString();  //生成したオブジェクトの名前を座標に変換
@@ -142,7 +142,7 @@ public class MapManager : MonoBehaviour
         }
         if (mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowState == 0)
         {
-            Debug.Log(ObjName);
+            //Debug.Log(ObjName);
             var obj = GameObject.Find(ObjName); //当たったXZ座標の一番上のブロックを取得
             Destroy(obj);
             mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].y--;   //一段下がった事を反映
@@ -185,7 +185,7 @@ public class MapManager : MonoBehaviour
         
         mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].Pre_State = (int)mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].y;   //その時点でのyの高さを保存
         //Debug.Log(mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].SnowState);
-        Debug.Log("y:" + mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].y);
+        //Debug.Log("y:" + mapinfos[(int)blockPos.position.x, (int)blockPos.position.z].y);
     }
 
     private void ChangeSnowState(GameObject block, Transform blockPos, int Check)  //雪玉が当たるたびに状態を変更

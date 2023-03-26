@@ -11,7 +11,7 @@ public class CameraMove : MonoBehaviour
 
     public GameObject cam;
     Quaternion cameraRot, characterRot;
-    float Xsensityvity = 3f, Ysensityvity = 3f;
+    public float Xsensityvity = 3f, Ysensityvity = 3f;
 
     bool cursorLock = true;
 

@@ -145,7 +145,7 @@ public class Enemy : MonoBehaviour
 
     private void StateManager()
     {
-        Debug.Log(currentState);
+        //Debug.Log(currentState);
         switch (currentState)
         {
             case State.Serch:
@@ -194,7 +194,6 @@ public class Enemy : MonoBehaviour
 
                 if (!Visible)  //å©é∏Ç§Ç∆íTçıÇ÷ñﬂÇÈ
                 {
-                    Debug.Log("Qq");
                     ChangeState(State.Serch);
                 }
 
@@ -348,7 +347,6 @@ public class Enemy : MonoBehaviour
 
         if (Physics.Raycast(ray.origin, ray.direction * Distance, out hit))
         {
-            Debug.Log(hit.collider.gameObject.layer);
             if (hit.collider.CompareTag("Player"))
             {
                 //Debug.Log("å©Ç¶ÇÈ");
